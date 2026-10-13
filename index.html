@@ -117,6 +117,23 @@ body.edit .star,.star.on{display:grid}
 body:not(.edit) .star{pointer-events:none}
 @keyframes starpop{0%{transform:scale(.6)}60%{transform:scale(1.28)}100%{transform:scale(1)}}
 @media (hover:hover) and (pointer:fine){.star:not(.on){opacity:0;transform:scale(.85)}.f:hover .star,.g:hover .star,.star:focus-visible{opacity:1;transform:none}}
+/* ★ Altın tema (yıldızlı içerikler) */
+:root{--g1:#f2d675;--g2:#d4af37;--gtint:rgba(212,175,55,.20);--gline:rgba(212,175,55,.45)}
+:root[data-m="light"]{--g1:#8a6414;--g2:#c79a1f;--gtint:rgba(199,154,31,.22);--gline:rgba(199,154,31,.55)}
+:root[data-m] .fav.f,:root[data-m] .fav.g{--bar:var(--g2);--acc:var(--g2);--on:#1a1400;box-shadow:inset 0 0 0 1px var(--gline),0 8px 24px -12px var(--g2)}
+.fav::before{background:linear-gradient(100deg,var(--gtint),rgba(212,175,55,.05) 70%,transparent)}
+.f.fav:not(.done) .t,.g.fav:not(.sdone) .t{color:var(--g1)}
+.fav .k{border-color:var(--gline);color:var(--g1)}
+.fav .star.on{background:var(--gtint)}
+.fav-in::before{animation:wipein .9s ease-out both}
+.fav-in{animation:gfade .9s ease-out}
+.fav-out::before{animation:wipeout .5s ease-in both}
+.fav-out{animation:gfadeout .5s ease-in both}
+.fav-out .t{color:var(--tx)!important}
+@keyframes wipein{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes wipeout{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 0 100%)}}
+@keyframes gfade{from{box-shadow:inset 0 0 0 1px transparent,0 8px 24px -12px transparent}}
+@keyframes gfadeout{to{box-shadow:inset 0 0 0 1px transparent,0 8px 24px -12px transparent}}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -389,12 +406,32 @@ function mkDel(fn) {
   var d = document.createElement('button');
   d.className = 'del'; d.innerHTML = SVGX; d.setAttribute('aria-label', 'Sil'); d.onclick = fn; return d;
 }
+var fxId = null;
+function favCls(x) { return x.f ? ' fav' + (x.id === fxId ? ' fav-in' : '') : ''; }
+function reorder(id) {
+  var ul = $('list'), old = {}, moved = [];
+  Array.prototype.forEach.call(ul.children, function (li) {
+    var k = li.getAttribute('data-id'); if (k) old[k] = li.getBoundingClientRect().top;
+  });
+  render();
+  Array.prototype.forEach.call(ul.children, function (li) {
+    var k = li.getAttribute('data-id'); if (!k || !(k in old)) return;
+    var dy = old[k] - li.getBoundingClientRect().top;
+    if (dy) { li.style.transition = 'none'; li.style.transform = 'translateY(' + dy + 'px)'; if (k === id) li.style.zIndex = '3'; moved.push(li); }
+  });
+  if (!moved.length) return;
+  void ul.offsetHeight;
+  moved.forEach(function (li) { li.style.transition = 'transform .6s cubic-bezier(.22,.8,.3,1)'; li.style.transform = ''; });
+  setTimeout(function () { moved.forEach(function (li) { li.style.transition = ''; li.style.zIndex = ''; }); }, 680);
+}
 function mkStar(x) {
   var b = document.createElement('button');
   b.className = 'star' + (x.f ? ' on' : ''); b.innerHTML = SVGSTAR; b.setAttribute('aria-label', 'Yıldızla');
   b.onclick = function () {
-    x.f = !x.f; b.classList.toggle('on', !!x.f); b.classList.add('pop');
-    save(); setTimeout(render, 380);
+    var li = b.closest('li'); x.f = !x.f; b.classList.toggle('on', !!x.f); b.classList.add('pop');
+    if (!x.f && li) li.classList.add('fav-out');
+    save();
+    setTimeout(function () { fxId = x.f ? x.id : null; reorder(x.id); fxId = null; }, x.f ? 300 : 520);
   };
   return b;
 }
@@ -402,7 +439,7 @@ function mkKind(t) { var k = document.createElement('span'); k.className = 'k'; 
 
 function buildFilm(x) {
   var li = document.createElement('li');
-  li.className = 'f k-' + CL[x.k] + (isW(x) ? ' done' : '');
+  li.className = 'f k-' + CL[x.k] + (isW(x) ? ' done' : '') + favCls(x); li.setAttribute('data-id', x.id);
   li.appendChild(mkChk(function () { var v = !isW(x); setW(x, v); li.classList.toggle('done', v); stats(); }));
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
@@ -415,7 +452,7 @@ function buildFilm(x) {
 
 function buildSeries(s) {
   s.e = eps(s);
-  var li = document.createElement('li'); li.className = 'g k-d' + (open[s.id] ? ' open' : '');
+  var li = document.createElement('li'); li.className = 'g k-d' + (open[s.id] ? ' open' : '') + favCls(s); li.setAttribute('data-id', s.id);
   var head = document.createElement('div'); head.className = 'row';
   var cnt = mkKind('');
   var prog = document.createElement('div'); prog.className = 'prog'; prog.hidden = !s.e.length;
