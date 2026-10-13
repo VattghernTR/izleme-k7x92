@@ -140,10 +140,28 @@ body:not(.edit) .star{pointer-events:none}
 .gout{animation:gout .8s ease-in-out both}
 @keyframes gin{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 @keyframes gout{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 100% 0 0)}}
+/* düzenle butonu + düzenleme penceresi */
+.pen{display:none;flex:none;width:30px;height:30px;border-radius:50%;background:var(--card2);border:0;color:var(--mut);cursor:pointer;padding:0;place-items:center;justify-self:end;transition:color .2s,background-color .2s}
+.pen svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.pen:hover{color:var(--acc)}
+body.edit .pen{display:grid}
+.ep .pen{background:var(--card)}
+.dico.eico{background:var(--card2);color:var(--acc)}
+.efield{text-align:left;margin-top:12px}
+.efield label{display:block;font-size:.7em;color:var(--mut);margin:0 0 4px}
+.efield input{width:100%;background:var(--card2);color:var(--tx);border:2px solid transparent;border-radius:12px;padding:12px;font:inherit;transition:border-color .2s}
+.efield input:focus{outline:none;border-color:var(--acc)}
+.dbtns .eyes{background:var(--acc);color:var(--on);border:1.5px solid transparent;transition:filter .2s,transform .15s}
+.dbtns .eyes:hover{filter:brightness(1.1)}
+.dbtns .eyes:active{transform:scale(.97)}
+/* bölüm izlendi: yerinde kalır, soldan sağa soluk siyah-beyaz */
+.ep{position:relative}
+.ep.gray{filter:grayscale(1);opacity:.58}
+.g.gray .ep.gray{opacity:1}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
-.f,.g{transition:background-color .5s,color .5s,opacity .45s}
+.f,.g,.ep{transition:background-color .5s,color .5s,opacity .45s}
 .empty{color:var(--mut);text-align:center;padding:40px 0}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#ff6b6b;color:#200;padding:10px 18px;border-radius:12px;display:none;font-size:.8em;max-width:90%}
 #toast.ok{background:var(--ok);color:#07140c}
@@ -166,7 +184,7 @@ body:not(.edit) .star{pointer-events:none}
 .menu{position:absolute;right:0;top:50px;z-index:10;min-width:220px;background:var(--card2);border-radius:14px;padding:6px;box-shadow:0 8px 28px rgba(0,0,0,.35);animation:fade .15s}
 .menu button{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;padding:12px;border-radius:10px;cursor:pointer;text-align:left;font-size:.8em}
 .menu button:hover{background:var(--card)}
-@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}.tabs{flex-direction:column;align-items:flex-start;gap:8px}.sep{display:none}.f,.row{align-items:flex-start}.main{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"t t d" "a s c";gap:6px 8px;align-items:center}.f .star{grid-area:c}.g .star{grid-area:s}.main .t{grid-area:t;flex:none}.acts{display:contents}.meta{grid-area:a}.chev{grid-area:c}.del{grid-area:d}.k{font-size:.72em}.prog{padding:0 12px 12px 56px}.bar{height:6px}}
+@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}.tabs{flex-direction:column;align-items:flex-start;gap:8px}.sep{display:none}.f,.row{align-items:flex-start}.main{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px 8px;align-items:center}.f .main{grid-template-areas:"t t d" "a s e"}.g .main{grid-template-areas:"t s d" "a e c"}.star{grid-area:s}.pen{grid-area:e}.main .t{grid-area:t;flex:none}.acts{display:contents}.meta{grid-area:a}.chev{grid-area:c}.del{grid-area:d}.k{font-size:.72em}.prog{padding:0 12px 12px 56px}.bar{height:6px}}
 </style>
 </head>
 <body>
@@ -217,6 +235,15 @@ body:not(.edit) .star{pointer-events:none}
     <p id="dtxt"></p>
     <div class="dbtns"><button type="button" id="dno" class="dno">İptal</button><button type="button" id="dyes" class="dyes">Sil</button></div>
   </div>
+</div>
+<div class="ovl" id="edlg" hidden>
+  <form class="dlg" id="eform" role="dialog" aria-modal="true" aria-labelledby="etitle">
+    <div class="dico eico"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+    <h2 id="etitle">Düzenle</h2>
+    <div class="efield"><label for="ename">Ad</label><input id="ename" autocomplete="off"></div>
+    <div class="efield"><label for="eurl">Bağlantı</label><input id="eurl" inputmode="url" autocomplete="off"></div>
+    <div class="dbtns"><button type="button" id="eno" class="dno">İptal</button><button type="submit" class="eyes">Kaydet</button></div>
+  </form>
 </div>
 <div id="toast"></div>
 <script>
@@ -378,6 +405,7 @@ var SVG = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 var SVGX = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 var SVGCH = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
 var SVGSTAR = '<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+var SVGPEN = '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>';
 var SVGLINK = '<svg viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg>';
 var uid = function () { return Date.now().toString(36) + Math.random().toString(36).slice(2, 5); };
 var fixUrl = function (u) { u = (u || '').trim(); return (u && !/^https?:\/\//i.test(u)) ? 'https://' + u : u; };
@@ -413,6 +441,18 @@ function mkDel(fn) {
   var d = document.createElement('button');
   d.className = 'del'; d.innerHTML = SVGX; d.setAttribute('aria-label', 'Sil'); d.onclick = fn; return d;
 }
+function killWipe(el) {
+  Array.prototype.slice.call(el.children).forEach(function (c) { if (c.className && String(c.className).indexOf('gwipe') > -1) el.removeChild(c); });
+}
+function epFx(el, v) {
+  var tk = el._fx = (el._fx || 0) + 1;
+  function ok() { return el._fx === tk && el.parentNode; }
+  if (v) {
+    setTimeout(function () { if (ok()) wipeGray(el, true, function () { if (ok()) el.classList.add('gray'); }); }, 550);
+  } else if (el.classList.contains('gray')) {
+    el.classList.remove('gray'); wipeGray(el, false);
+  } else { killWipe(el); }
+}
 function wipeGray(el, toGray, cb) {
   var ov = document.createElement('div'), fin = false;
   ov.className = 'gwipe ' + (toGray ? 'gin' : 'gout');
@@ -440,7 +480,7 @@ function doneFx(li, v, id) {
   } else if (li.classList.contains('gray')) {
     li.classList.remove('gray');
     wipeGray(li, false, function () { if (ok()) reorder(id); });
-  } else { reorder(id); }
+  } else { killWipe(li); reorder(id); }
 }
 var fxId = null;
 function favCls(x) { return x.f ? ' fav' + (x.id === fxId ? ' fav-in' : '') : ''; }
@@ -471,6 +511,12 @@ function mkStar(x) {
   };
   return b;
 }
+function mkPen(x, label) {
+  var b = document.createElement('button');
+  b.className = 'pen'; b.innerHTML = SVGPEN; b.setAttribute('aria-label', 'Düzenle');
+  b.onclick = function () { askEdit(label, x.t, x.u, function (n, u) { x.t = n; x.u = u; render(); save(); }); };
+  return b;
+}
 function mkKind(t) { var k = document.createElement('span'); k.className = 'k'; k.textContent = t; return k; }
 
 function buildFilm(x) {
@@ -480,7 +526,7 @@ function buildFilm(x) {
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
   main.appendChild(mkLink(x));
-  var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(mkKind(x.k)); acts.appendChild(meta); acts.appendChild(mkStar(x));
+  var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(mkKind(x.k)); acts.appendChild(meta); acts.appendChild(mkStar(x)); acts.appendChild(mkPen(x, x.k === 'Film' ? 'Filmi düzenle' : 'İçeriği düzenle'));
   acts.appendChild(mkDel(function () { askDel('"' + x.t + '" listeden kaldırılacak.', function () { S.items = S.items.filter(function (z) { return z.id !== x.id; }); render(); save(); }); }));
   main.appendChild(acts); li.appendChild(main);
   return li;
@@ -503,7 +549,11 @@ function buildSeries(s) {
     head.classList.toggle('done', d); li.classList.toggle('sdone', d);
     if (first) li.classList.toggle('gray', d);
     cnt.textContent = s.e.length ? (n + '/' + s.e.length) : 'Dizi';
-    epEls.forEach(function (q) { q.el.classList.toggle('done', isW(q.x)); });
+    epEls.forEach(function (q) {
+      var w = isW(q.x), was = q.el.classList.contains('done');
+      q.el.classList.toggle('done', w);
+      if (first) q.el.classList.toggle('gray', w); else if (was !== w) epFx(q.el, w);
+    });
     pct.textContent = '%' + p;
     if (!first) fill.style.width = p + '%';
     stats();
@@ -530,10 +580,11 @@ function buildSeries(s) {
   acts.appendChild(meta);
   acts.appendChild(mkStar(s));
   acts.appendChild(chev);
+  acts.appendChild(mkPen(s, 'Diziyi düzenle'));
   acts.appendChild(mkDel(function () { askDel('"' + s.t + '"' + (s.e.length ? ' ve ' + s.e.length + ' bölümü' : '') + ' listeden kaldırılacak.', function () { S.items = S.items.filter(function (z) { return z.id !== s.id; }); render(); save(); }); }));
   main.appendChild(acts); head.appendChild(main);
   li.appendChild(head); li.appendChild(prog);
-  li.onclick = function (ev) { if (ev.target.closest('.eps,.chk,.del,.star,a')) return; tog(); };
+  li.onclick = function (ev) { if (ev.target.closest('.eps,.chk,.del,.star,.pen,a')) return; tog(); };
 
   var box = document.createElement('div'); box.className = 'eps';
   if (s.e.length) {
@@ -542,6 +593,7 @@ function buildSeries(s) {
       var el = document.createElement('li'); el.className = 'ep' + (isW(e) ? ' done' : '');
       el.appendChild(mkChk(function () { var was = doneS(s); setW(e, !isW(e)); sync(); doneChg(was); }));
       el.appendChild(mkLink(e));
+      el.appendChild(mkPen(e, 'Bölümü düzenle'));
       el.appendChild(mkDel(function () { askDel('"' + e.t + '" listeden kaldırılacak.', function () { s.e = s.e.filter(function (z) { return z.id !== e.id; }); render(); save(); }); }));
       ul.appendChild(el); epEls.push({ el: el, x: e });
     });
@@ -602,6 +654,20 @@ function render() {
 }
 function app() { document.body.classList.toggle('edit', canEdit); $('menu').hidden = true; show('app'); render(); }
 
+var eOk = null;
+function askEdit(title, name, url, ok) {
+  $('etitle').textContent = title; $('ename').value = name; $('eurl').value = url || ''; eOk = ok;
+  $('edlg').hidden = false; $('ename').focus(); $('ename').select();
+}
+function closeEdit() { $('edlg').hidden = true; eOk = null; }
+$('eno').onclick = closeEdit;
+$('edlg').onclick = function (ev) { if (ev.target === this) closeEdit(); };
+$('eform').onsubmit = function (ev) {
+  ev.preventDefault();
+  var n = $('ename').value.trim(); if (!n) { $('ename').focus(); return; }
+  var f = eOk, u = fixUrl($('eurl').value); closeEdit(); if (f) f(n, u);
+};
+document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) closeEdit(); });
 var dOk = null;
 function askDel(txt, ok) { $('dtxt').textContent = txt; dOk = ok; $('dlg').hidden = false; $('dno').focus(); }
 function closeDlg() { $('dlg').hidden = true; dOk = null; }
