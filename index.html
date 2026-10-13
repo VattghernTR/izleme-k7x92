@@ -97,6 +97,13 @@ body.edit .del{display:grid}
 .dyes:hover,.dyes:active,.dyes:focus-visible{background:var(--dfill);border-color:var(--dfill);color:#fff}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+/* Tümü ve İzlenmedi görünümünde her içerik kendi kategori renginde */
+:root[data-c="a"] .k-f,:root[data-c="t"] .k-f{--card:#231819;--card2:#2f2022;--acc:#ff6b6b;--on:#1a0809}
+:root[data-c="a"] .k-d,:root[data-c="t"] .k-d{--card:#17231b;--card2:#1f3025;--acc:#3ddc84;--on:#07140c;--donebg:#0f2d1c;--doneep:#143a24}
+:root[data-c="a"] .k-o,:root[data-c="t"] .k-o{--card:#231f14;--card2:#302a1b;--acc:#ffd24a;--on:#1a1400}
+:root[data-m="light"][data-c="a"] .k-f,:root[data-m="light"][data-c="t"] .k-f{--card:#fdeced;--card2:#f6dfe1;--acc:#e5484d;--on:#fff}
+:root[data-m="light"][data-c="a"] .k-d,:root[data-m="light"][data-c="t"] .k-d{--card:#e6f5ec;--card2:#d3eddc;--acc:#16a34a;--on:#fff;--donebg:#cdeed9;--doneep:#bde6cd}
+:root[data-m="light"][data-c="a"] .k-o,:root[data-m="light"][data-c="t"] .k-o{--card:#fbf3d6;--card2:#f3eac3;--acc:#e0a400;--on:#1a1400}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -372,7 +379,7 @@ function mkKind(t) { var k = document.createElement('span'); k.className = 'k'; 
 
 function buildFilm(x) {
   var li = document.createElement('li');
-  li.className = 'f' + (isW(x) ? ' done' : '');
+  li.className = 'f k-' + CL[x.k] + (isW(x) ? ' done' : '');
   li.appendChild(mkChk(function () { var v = !isW(x); setW(x, v); li.classList.toggle('done', v); stats(); }));
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
@@ -385,7 +392,7 @@ function buildFilm(x) {
 
 function buildSeries(s) {
   s.e = eps(s);
-  var li = document.createElement('li'); li.className = 'g' + (open[s.id] ? ' open' : '');
+  var li = document.createElement('li'); li.className = 'g k-d' + (open[s.id] ? ' open' : '');
   var head = document.createElement('div'); head.className = 'row';
   var cnt = mkKind('');
   var prog = document.createElement('div'); prog.className = 'prog'; prog.hidden = !s.e.length;
