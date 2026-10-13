@@ -23,7 +23,9 @@ body{margin:0;min-height:100vh;color:var(--tx);font:20px/1.4 system-ui,-apple-sy
 .wrap{max-width:900px;margin:0 auto;padding:24px 18px 60px}
 h1{font-size:2em;margin:0 0 4px}
 .sub{color:var(--mut);margin:0 0 18px;font-size:.8em}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.tabs{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:0 0 16px}
+.tg{display:flex;gap:8px;flex-wrap:wrap}
+.sep{width:2px;height:26px;border-radius:2px;background:var(--mut);opacity:.45}
 button,input,select{font:inherit;color:inherit}
 .tab{background:var(--card);border:2px solid transparent;border-radius:999px;padding:8px 18px;cursor:pointer}
 .tab.on{background:var(--acc);color:var(--on);font-weight:600}
@@ -41,7 +43,7 @@ ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .done>.chk{background:var(--ok);border-color:var(--ok);transform:scale(1.08)}
 .done>.chk svg{stroke-dashoffset:0}
 .t{flex:1;min-width:0;color:var(--tx);text-decoration:none;word-break:break-word;padding:4px 2px;border-radius:8px;border:0;text-align:left;cursor:pointer;background:linear-gradient(var(--ok),var(--ok)) no-repeat 0 55%/0 3px;transition:background-size .45s,color .35s}
-.done>.t{background-size:100% 3px;color:var(--okt)}
+.done .t{background-size:100% 3px;color:var(--okt)}
 .k{flex:none;font-size:.62em;color:var(--mut);border:1px solid var(--mut);border-radius:999px;padding:2px 10px}
 .chev{flex:none;background:transparent;border:0;color:var(--mut);font-size:1.1em;cursor:pointer;padding:4px 8px;transition:transform .25s}
 .g.open .chev{transform:rotate(90deg)}
@@ -56,6 +58,22 @@ body.edit .del{display:block}
 .ep .chk{width:34px;height:34px}.ep .chk svg{width:20px;height:20px}
 .eps .add{margin:10px 0 0;background:transparent;padding:0}
 .noep{color:var(--mut);font-size:.8em;padding:4px 2px}
+.main{flex:1;min-width:0;display:flex;align-items:center;gap:14px}
+.acts{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap}
+.prog{display:flex;align-items:center;gap:10px;padding:0 14px 12px}
+.bar{flex:1;height:8px;border-radius:999px;background:var(--card2);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:999px;background-color:var(--acc);background-image:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.32));transition:width .6s cubic-bezier(.4,0,.2,1),background-color .4s}
+.g.sdone .bar i{background-color:var(--ok)}
+.pct{font-size:.62em;color:var(--mut);min-width:2.8em;text-align:right}
+.sel{position:relative;flex:none}
+.add .selbtn{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:120px;background:var(--card2);color:var(--tx);border:2px solid transparent;border-radius:12px;padding:10px 14px;font-weight:400;cursor:pointer}
+.selbtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.sel.open .selbtn svg{transform:rotate(180deg)}
+.add .sel.open .selbtn,.add .selbtn:focus-visible{border-color:var(--acc)}
+.opts{position:absolute;left:0;top:calc(100% + 6px);min-width:100%;z-index:20;background:var(--card2);border-radius:14px;padding:6px;box-shadow:0 8px 28px rgba(0,0,0,.35);animation:fade .15s}
+.add .opts button{display:block;width:100%;background:transparent;color:var(--tx);border:0;border-radius:10px;padding:10px 14px;text-align:left;font-weight:400;white-space:nowrap;cursor:pointer}
+.add .opts button:hover{background:var(--card)}
+.add .opts button.sel1{background:var(--acc);color:var(--on);font-weight:600}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -81,7 +99,7 @@ body.edit .del{display:block}
 .menu{position:absolute;right:0;top:50px;z-index:10;min-width:220px;background:var(--card2);border-radius:14px;padding:6px;box-shadow:0 8px 28px rgba(0,0,0,.35);animation:fade .15s}
 .menu button{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;padding:12px;border-radius:10px;cursor:pointer;text-align:left;font-size:.8em}
 .menu button:hover{background:var(--card)}
-@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}}
+@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}.tabs{flex-direction:column;align-items:flex-start;gap:8px}.sep{display:none}.main{flex-direction:column;align-items:stretch;gap:6px}.main .t{flex:none}.prog{padding:0 12px 10px}}
 </style>
 </head>
 <body>
@@ -120,7 +138,7 @@ body.edit .del{display:block}
   <form class="add" id="add">
     <input class="n" id="n" placeholder="Film Adı" required>
     <input class="u" id="u" placeholder="Bağlantı" inputmode="url">
-    <select id="k"><option>Film</option><option>Dizi</option><option>Diğer</option></select>
+    <div class="sel" id="ksel"><button type="button" id="kbtn" class="selbtn" aria-haspopup="listbox"><span id="kval">Film</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="opts" id="kopts" role="listbox" hidden></div></div>
     <button type="submit">Ekle</button>
   </form>
   <ul id="list"></ul>
@@ -278,7 +296,7 @@ setInterval(applyTheme, 60000);
 applyTheme();
 
 /* ---------- liste ---------- */
-var TABS = [['all','Tümü'],['Film','Film'],['Dizi','Dizi'],['Diğer','Diğer'],['todo','İzlenmedi']];
+var G1 = [['all','Tümü'],['todo','İzlenmedi']], G2 = [['Film','Film'],['Dizi','Dizi'],['Diğer','Diğer']];
 var CL = { all: 'a', Film: 'f', Dizi: 'd', 'Diğer': 'o', todo: 't' };
 var PH = { Film: 'Film Adı', Dizi: 'Dizi Adı', 'Diğer': 'Adı' };
 var SVG = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
@@ -294,12 +312,13 @@ function setW(x, v) {
   else { local[x.id] = v; lset(LK, JSON.stringify(local)); }
 }
 function stats() {
-  var tot = 0, seen = 0;
+  var tot = 0, seen = 0, cat = (filter === 'Film' || filter === 'Dizi' || filter === 'Diğer');
   S.items.forEach(function (x) {
+    if (cat && x.k !== filter) return;
     if (x.k === 'Dizi' && eps(x).length) { eps(x).forEach(function (e) { tot++; if (isW(e)) seen++; }); }
     else { tot++; if (isW(x)) seen++; }
   });
-  $('sub').textContent = tot ? (seen + ' / ' + tot + ' izlendi') : '';
+  $('sub').textContent = !tot ? '' : (filter === 'todo' ? (tot - seen) + ' izlenmeyi bekliyor' : seen + ' / ' + tot + ' izlendi');
 }
 function mkChk(fn) {
   var c = document.createElement('button');
@@ -321,9 +340,12 @@ function buildFilm(x) {
   var li = document.createElement('li');
   li.className = 'f' + (isW(x) ? ' done' : '');
   li.appendChild(mkChk(function () { var v = !isW(x); setW(x, v); li.classList.toggle('done', v); stats(); }));
-  li.appendChild(mkLink(x));
-  li.appendChild(mkKind(x.k));
-  li.appendChild(mkDel(function () { S.items = S.items.filter(function (z) { return z.id !== x.id; }); render(); save(); }));
+  var main = document.createElement('div'); main.className = 'main';
+  var acts = document.createElement('div'); acts.className = 'acts';
+  main.appendChild(mkLink(x));
+  acts.appendChild(mkKind(x.k));
+  acts.appendChild(mkDel(function () { S.items = S.items.filter(function (z) { return z.id !== x.id; }); render(); save(); }));
+  main.appendChild(acts); li.appendChild(main);
   return li;
 }
 
@@ -332,12 +354,20 @@ function buildSeries(s) {
   var li = document.createElement('li'); li.className = 'g' + (open[s.id] ? ' open' : '');
   var head = document.createElement('div'); head.className = 'row';
   var cnt = mkKind('');
+  var prog = document.createElement('div'); prog.className = 'prog'; prog.hidden = !s.e.length;
+  var bar = document.createElement('div'); bar.className = 'bar';
+  var fill = document.createElement('i'); bar.appendChild(fill);
+  var pct = document.createElement('span'); pct.className = 'pct';
+  prog.appendChild(bar); prog.appendChild(pct);
+  function pctOf() { return s.e.length ? Math.round(s.e.filter(isW).length * 100 / s.e.length) : (isW(s) ? 100 : 0); }
   var epEls = [];
-  function sync() {
-    var d = doneS(s), n = s.e.filter(isW).length;
+  function sync(first) {
+    var d = doneS(s), n = s.e.filter(isW).length, p = pctOf();
     head.classList.toggle('done', d); li.classList.toggle('sdone', d);
     cnt.textContent = s.e.length ? (n + '/' + s.e.length) : 'Dizi';
-    epEls.forEach(function (p) { p.el.classList.toggle('done', isW(p.x)); });
+    epEls.forEach(function (q) { q.el.classList.toggle('done', isW(q.x)); });
+    pct.textContent = '%' + p;
+    if (!first) fill.style.width = p + '%';
     stats();
   }
   function tog() {
@@ -348,16 +378,20 @@ function buildSeries(s) {
   title.className = 't'; title.textContent = s.t; title.onclick = tog;
   var chev = document.createElement('button');
   chev.className = 'chev'; chev.textContent = '▸'; chev.tabIndex = -1; chev.setAttribute('aria-hidden', 'true'); chev.onclick = tog;
+  var main = document.createElement('div'); main.className = 'main';
+  var acts = document.createElement('div'); acts.className = 'acts';
   head.appendChild(mkChk(function () {
     var v = !doneS(s);
     if (s.e.length) s.e.forEach(function (e) { setW(e, v); }); else setW(s, v);
     sync();
   }));
-  head.appendChild(title); head.appendChild(cnt);
-  if (s.u) { var a = document.createElement('a'); a.className = 'k'; a.textContent = '↗'; a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; head.appendChild(a); }
-  head.appendChild(chev);
-  head.appendChild(mkDel(function () { S.items = S.items.filter(function (z) { return z.id !== s.id; }); render(); save(); }));
-  li.appendChild(head);
+  main.appendChild(title);
+  acts.appendChild(cnt);
+  if (s.u) { var a = document.createElement('a'); a.className = 'k'; a.textContent = '↗'; a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; acts.appendChild(a); }
+  acts.appendChild(chev);
+  acts.appendChild(mkDel(function () { S.items = S.items.filter(function (z) { return z.id !== s.id; }); render(); save(); }));
+  main.appendChild(acts); head.appendChild(main);
+  li.appendChild(head); li.appendChild(prog);
 
   var box = document.createElement('div'); box.className = 'eps';
   if (s.e.length) {
@@ -386,20 +420,28 @@ function buildSeries(s) {
   };
   box.appendChild(f);
   li.appendChild(box);
-  sync();
+  sync(true);
+  setTimeout(function () { fill.style.width = pctOf() + '%'; }, 40);
   return li;
 }
 
 function render() {
   document.documentElement.setAttribute('data-c', CL[filter]);
   var tabs = $('tabs'); tabs.textContent = '';
-  TABS.forEach(function (x) {
-    var b = document.createElement('button');
-    b.className = 'tab' + (filter === x[0] ? ' on' : '');
-    b.textContent = x[1];
-    b.onclick = function () { filter = x[0]; render(); };
-    tabs.appendChild(b);
-  });
+  function grp(list) {
+    var g = document.createElement('div'); g.className = 'tg';
+    list.forEach(function (x) {
+      var b = document.createElement('button');
+      b.className = 'tab' + (filter === x[0] ? ' on' : '');
+      b.textContent = x[1];
+      b.onclick = function () { filter = x[0]; render(); };
+      g.appendChild(b);
+    });
+    tabs.appendChild(g);
+  }
+  grp(G1);
+  var sp = document.createElement('span'); sp.className = 'sep'; tabs.appendChild(sp);
+  grp(G2);
   var ul = $('list'); ul.textContent = '';
   var items = S.items.filter(function (x) {
     if (filter === 'all') return true;
@@ -416,12 +458,25 @@ function render() {
 }
 function app() { document.body.classList.toggle('edit', canEdit); $('menu').hidden = true; show('app'); render(); }
 
-$('k').onchange = function () { $('n').placeholder = PH[this.value]; };
+var curKind = 'Film';
+function pickKind(v) {
+  curKind = v; $('kval').textContent = v; $('n').placeholder = PH[v];
+  $('kopts').hidden = true; $('ksel').classList.remove('open');
+  Array.prototype.forEach.call($('kopts').children, function (b) { b.className = b.textContent === v ? 'sel1' : ''; });
+}
+['Film', 'Dizi', 'Diğer'].forEach(function (v) {
+  var b = document.createElement('button'); b.type = 'button'; b.textContent = v; b.setAttribute('role', 'option');
+  b.onclick = function () { pickKind(v); }; $('kopts').appendChild(b);
+});
+$('kbtn').onclick = function (ev) { ev.stopPropagation(); var o = $('kopts'); o.hidden = !o.hidden; $('ksel').classList.toggle('open', !o.hidden); };
+document.addEventListener('click', function (ev) { if (!$('ksel').contains(ev.target)) { $('kopts').hidden = true; $('ksel').classList.remove('open'); } });
+document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) { $('kopts').hidden = true; $('ksel').classList.remove('open'); } });
+pickKind('Film');
 $('add').onsubmit = function (ev) {
   ev.preventDefault();
   var t = $('n').value.trim();
   if (!t) return;
-  var k = $('k').value, x = { id: uid(), t: t, u: fixUrl($('u').value), k: k, w: false };
+  var k = curKind, x = { id: uid(), t: t, u: fixUrl($('u').value), k: k, w: false };
   if (k === 'Dizi') { x.e = []; open[x.id] = true; lset(OKEY, JSON.stringify(open)); }
   S.items.unshift(x);
   $('n').value = ''; $('u').value = '';
