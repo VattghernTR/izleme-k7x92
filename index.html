@@ -39,13 +39,12 @@ body.edit .add{display:flex}
 ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .f,.g{position:relative;background:var(--card);border-radius:16px}
 .f,.row,.ep{display:flex;align-items:center;gap:14px;padding:12px 14px}
-.g.sdone,.f.done{background:var(--donebg)}
 .chk{flex:none;width:40px;height:40px;border-radius:50%;border:3px solid var(--mut);background:transparent;cursor:pointer;display:grid;place-items:center;padding:0;transition:background .25s,border-color .25s,transform .25s}
-.chk svg{width:24px;height:24px;fill:none;stroke:var(--okon);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:26;stroke-dashoffset:26;transition:stroke-dashoffset .35s .1s}
-.done>.chk{background:var(--ok);border-color:var(--ok);transform:scale(1.08)}
+.chk svg{width:24px;height:24px;fill:none;stroke:var(--on);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:26;stroke-dashoffset:26;transition:stroke-dashoffset .35s .1s}
+.done>.chk{background:var(--acc);border-color:var(--acc);transform:scale(1.08)}
 .done>.chk svg{stroke-dashoffset:0}
-.t{flex:1;min-width:0;color:var(--tx);text-decoration:none;word-break:break-word;padding:4px 2px;border-radius:8px;border:0;text-align:left;cursor:pointer;background:linear-gradient(var(--ok),var(--ok)) no-repeat 0 55%/0 3px;transition:background-size .45s,color .35s}
-.done .t{background-size:100% 3px;color:var(--okt)}
+.t{flex:1;min-width:0;color:var(--tx);text-decoration:none;word-break:break-word;padding:4px 2px;border-radius:8px;border:0;text-align:left;cursor:pointer;background:linear-gradient(var(--acc),var(--acc)) no-repeat 0 55%/0 3px;transition:background-size .45s,color .35s}
+.done .t{background-size:100% 3px;color:var(--mut)}
 .k{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;height:28px;padding:0 12px;font-size:.65em;color:var(--mut);border:1px solid var(--mut);border-radius:999px;text-decoration:none}
 .k svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .chev{flex:none;width:30px;height:30px;border-radius:50%;background:var(--card2);border:0;color:var(--mut);cursor:pointer;padding:0;display:grid;place-items:center;justify-self:end}
@@ -60,7 +59,6 @@ body.edit .del{display:grid}
 .g.open .eps{display:block}
 .eps ul{gap:6px}
 .ep{background:var(--card2);border-radius:12px;padding:8px 12px}
-.ep.done{background:var(--doneep)}
 .ep .chk{width:34px;height:34px}.ep .chk svg{width:20px;height:20px}
 .eps .add{margin:10px 0 0;background:transparent;padding:0}
 .noep{color:var(--mut);font-size:.8em;padding:4px 2px}
@@ -131,12 +129,21 @@ body:not(.edit) .star{pointer-events:none}
 .fav-out{animation:gfadeout .5s ease-in both}
 .fav-out .t{color:var(--tx)!important}
 @keyframes wipein{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
-@keyframes wipeout{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 0 100%)}}
+@keyframes wipeout{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 100% 0 0)}}
 @keyframes gfade{from{box-shadow:inset 0 0 0 1px transparent,0 8px 24px -12px transparent}}
 @keyframes gfadeout{to{box-shadow:inset 0 0 0 1px transparent,0 8px 24px -12px transparent}}
+/* izlendi: soldan sağa soluk siyah-beyaz, geri alınca sağdan sola eski rengine */
+.f.gray,.g.gray{filter:grayscale(1);opacity:.58}
+.f.gray:hover,.g.gray:hover{opacity:.9}
+.gwipe{position:absolute;left:0;top:0;right:0;bottom:0;z-index:2;border-radius:inherit;background:#808080;mix-blend-mode:saturation;pointer-events:none}
+.gin{animation:gin .8s ease-in-out both}
+.gout{animation:gout .8s ease-in-out both}
+@keyframes gin{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes gout{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 100% 0 0)}}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
+.f,.g{transition:background-color .5s,color .5s,opacity .45s}
 .empty{color:var(--mut);text-align:center;padding:40px 0}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#ff6b6b;color:#200;padding:10px 18px;border-radius:12px;display:none;font-size:.8em;max-width:90%}
 #toast.ok{background:var(--ok);color:#07140c}
@@ -406,6 +413,35 @@ function mkDel(fn) {
   var d = document.createElement('button');
   d.className = 'del'; d.innerHTML = SVGX; d.setAttribute('aria-label', 'Sil'); d.onclick = fn; return d;
 }
+function wipeGray(el, toGray, cb) {
+  var ov = document.createElement('div'), fin = false;
+  ov.className = 'gwipe ' + (toGray ? 'gin' : 'gout');
+  function end() { if (fin) return; fin = true; if (ov.parentNode) ov.parentNode.removeChild(ov); if (cb) cb(); }
+  ov.addEventListener('animationend', end);
+  setTimeout(end, 1100);
+  el.appendChild(ov);
+}
+function doneFx(li, v, id) {
+  var tk = li._fx = (li._fx || 0) + 1;
+  function ok() { return li._fx === tk && li.parentNode; }
+  if (v) {
+    setTimeout(function () {
+      if (!ok()) return;
+      wipeGray(li, true, function () {
+        if (!ok()) return;
+        li.classList.add('gray');
+        setTimeout(function () {
+          if (!ok()) return;
+          if (filter === 'todo') { li.style.opacity = '0'; setTimeout(function () { if (ok()) reorder(id); }, 320); }
+          else reorder(id);
+        }, 250);
+      });
+    }, 550);
+  } else if (li.classList.contains('gray')) {
+    li.classList.remove('gray');
+    wipeGray(li, false, function () { if (ok()) reorder(id); });
+  } else { reorder(id); }
+}
 var fxId = null;
 function favCls(x) { return x.f ? ' fav' + (x.id === fxId ? ' fav-in' : '') : ''; }
 function reorder(id) {
@@ -439,8 +475,8 @@ function mkKind(t) { var k = document.createElement('span'); k.className = 'k'; 
 
 function buildFilm(x) {
   var li = document.createElement('li');
-  li.className = 'f k-' + CL[x.k] + (isW(x) ? ' done' : '') + favCls(x); li.setAttribute('data-id', x.id);
-  li.appendChild(mkChk(function () { var v = !isW(x); setW(x, v); li.classList.toggle('done', v); stats(); }));
+  li.className = 'f k-' + CL[x.k] + (isW(x) ? ' done gray' : '') + favCls(x); li.setAttribute('data-id', x.id);
+  li.appendChild(mkChk(function () { var v = !isW(x); setW(x, v); li.classList.toggle('done', v); stats(); doneFx(li, v, x.id); }));
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
   main.appendChild(mkLink(x));
@@ -465,12 +501,14 @@ function buildSeries(s) {
   function sync(first) {
     var d = doneS(s), n = s.e.filter(isW).length, p = pctOf();
     head.classList.toggle('done', d); li.classList.toggle('sdone', d);
+    if (first) li.classList.toggle('gray', d);
     cnt.textContent = s.e.length ? (n + '/' + s.e.length) : 'Dizi';
     epEls.forEach(function (q) { q.el.classList.toggle('done', isW(q.x)); });
     pct.textContent = '%' + p;
     if (!first) fill.style.width = p + '%';
     stats();
   }
+  function doneChg(was) { var now = doneS(s); if (was !== now) doneFx(li, now, s.id); }
   function tog() {
     open[s.id] = !open[s.id]; li.classList.toggle('open', !!open[s.id]);
     lset(OKEY, JSON.stringify(open));
@@ -482,9 +520,9 @@ function buildSeries(s) {
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
   head.appendChild(mkChk(function () {
-    var v = !doneS(s);
+    var was = doneS(s), v = !was;
     if (s.e.length) s.e.forEach(function (e) { setW(e, v); }); else setW(s, v);
-    sync();
+    sync(); doneChg(was);
   }));
   main.appendChild(title);
   var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(cnt);
@@ -502,7 +540,7 @@ function buildSeries(s) {
     var ul = document.createElement('ul');
     s.e.forEach(function (e) {
       var el = document.createElement('li'); el.className = 'ep' + (isW(e) ? ' done' : '');
-      el.appendChild(mkChk(function () { setW(e, !isW(e)); sync(); }));
+      el.appendChild(mkChk(function () { var was = doneS(s); setW(e, !isW(e)); sync(); doneChg(was); }));
       el.appendChild(mkLink(e));
       el.appendChild(mkDel(function () { askDel('"' + e.t + '" listeden kaldırılacak.', function () { s.e = s.e.filter(function (z) { return z.id !== e.id; }); render(); save(); }); }));
       ul.appendChild(el); epEls.push({ el: el, x: e });
@@ -553,6 +591,7 @@ function render() {
     return x.k === filter;
   });
   items = items.filter(function (x) { return x.f; }).sort(function (a, b) { return a.t.localeCompare(b.t, 'tr'); }).concat(items.filter(function (x) { return !x.f; }));
+  items = items.filter(function (x) { return !doneX(x); }).concat(items.filter(doneX));
   stats();
   if (!items.length) {
     var e = document.createElement('li'); e.className = 'empty';
