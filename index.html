@@ -81,6 +81,22 @@ body.edit .del{display:grid}
 .add .opts button{display:block;width:100%;background:transparent;color:var(--tx);border:0;border-radius:10px;padding:10px 14px;text-align:left;font-weight:400;white-space:nowrap;cursor:pointer}
 .add .opts button:hover{background:var(--card)}
 .add .opts button.sel1{background:var(--acc);color:var(--on);font-weight:600}
+.g>.row,.g>.prog{cursor:pointer}
+:root{--dtx:#f08a82;--dbd:#a8332d;--dfill:#9b2020}
+:root[data-m="light"]{--dtx:#b42318;--dbd:#e3a8a2;--dfill:#a82a24}
+.ovl{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);animation:fadein .2s}
+.dlg{width:100%;max-width:340px;background:var(--card);border:1px solid var(--card2);border-radius:22px;padding:22px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45);animation:pop .22s cubic-bezier(.2,.9,.3,1.2)}
+.dico{width:48px;height:48px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;background:rgba(190,45,45,.15);color:var(--dtx)}
+.dico svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.dlg h2{font-size:1.05em;margin:0 0 6px}
+.dlg p{margin:0;color:var(--mut);font-size:.8em;word-break:break-word}
+.dbtns{display:flex;gap:10px;margin-top:20px}
+.dbtns button{flex:1;height:44px;border-radius:14px;font-weight:600;cursor:pointer}
+.dno{background:var(--card2);color:var(--tx);border:1.5px solid transparent}
+.dyes{background:transparent;color:var(--dtx);border:1.5px solid var(--dbd);transition:background-color .2s,color .2s,border-color .2s}
+.dyes:hover,.dyes:active,.dyes:focus-visible{background:var(--dfill);border-color:var(--dfill);color:#fff}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -149,6 +165,14 @@ body.edit .del{display:grid}
     <button type="submit">Ekle</button>
   </form>
   <ul id="list"></ul>
+</div>
+<div class="ovl" id="dlg" hidden>
+  <div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dtitle">
+    <div class="dico"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg></div>
+    <h2 id="dtitle">Silmek istiyor musun?</h2>
+    <p id="dtxt"></p>
+    <div class="dbtns"><button type="button" id="dno" class="dno">İptal</button><button type="button" id="dyes" class="dyes">Sil</button></div>
+  </div>
 </div>
 <div id="toast"></div>
 <script>
@@ -354,7 +378,7 @@ function buildFilm(x) {
   var acts = document.createElement('div'); acts.className = 'acts';
   main.appendChild(mkLink(x));
   var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(mkKind(x.k)); acts.appendChild(meta);
-  acts.appendChild(mkDel(function () { S.items = S.items.filter(function (z) { return z.id !== x.id; }); render(); save(); }));
+  acts.appendChild(mkDel(function () { askDel('"' + x.t + '" listeden kaldırılacak.', function () { S.items = S.items.filter(function (z) { return z.id !== x.id; }); render(); save(); }); }));
   main.appendChild(acts); li.appendChild(main);
   return li;
 }
@@ -385,9 +409,9 @@ function buildSeries(s) {
     lset(OKEY, JSON.stringify(open));
   }
   var title = document.createElement('button');
-  title.className = 't'; title.textContent = s.t; title.onclick = tog;
+  title.className = 't'; title.textContent = s.t;
   var chev = document.createElement('button');
-  chev.className = 'chev'; chev.innerHTML = SVGCH; chev.tabIndex = -1; chev.setAttribute('aria-hidden', 'true'); chev.onclick = tog;
+  chev.className = 'chev'; chev.innerHTML = SVGCH; chev.tabIndex = -1; chev.setAttribute('aria-hidden', 'true');
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
   head.appendChild(mkChk(function () {
@@ -400,9 +424,10 @@ function buildSeries(s) {
   if (s.u) { var a = document.createElement('a'); a.className = 'k'; a.innerHTML = SVGLINK; a.setAttribute('aria-label', 'Bağlantıyı aç'); a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; meta.appendChild(a); }
   acts.appendChild(meta);
   acts.appendChild(chev);
-  acts.appendChild(mkDel(function () { S.items = S.items.filter(function (z) { return z.id !== s.id; }); render(); save(); }));
+  acts.appendChild(mkDel(function () { askDel('"' + s.t + '"' + (s.e.length ? ' ve ' + s.e.length + ' bölümü' : '') + ' listeden kaldırılacak.', function () { S.items = S.items.filter(function (z) { return z.id !== s.id; }); render(); save(); }); }));
   main.appendChild(acts); head.appendChild(main);
   li.appendChild(head); li.appendChild(prog);
+  li.onclick = function (ev) { if (ev.target.closest('.eps,.chk,.del,a')) return; tog(); };
 
   var box = document.createElement('div'); box.className = 'eps';
   if (s.e.length) {
@@ -411,7 +436,7 @@ function buildSeries(s) {
       var el = document.createElement('li'); el.className = 'ep' + (isW(e) ? ' done' : '');
       el.appendChild(mkChk(function () { setW(e, !isW(e)); sync(); }));
       el.appendChild(mkLink(e));
-      el.appendChild(mkDel(function () { s.e = s.e.filter(function (z) { return z.id !== e.id; }); render(); save(); }));
+      el.appendChild(mkDel(function () { askDel('"' + e.t + '" listeden kaldırılacak.', function () { s.e = s.e.filter(function (z) { return z.id !== e.id; }); render(); save(); }); }));
       ul.appendChild(el); epEls.push({ el: el, x: e });
     });
     box.appendChild(ul);
@@ -469,6 +494,13 @@ function render() {
 }
 function app() { document.body.classList.toggle('edit', canEdit); $('menu').hidden = true; show('app'); render(); }
 
+var dOk = null;
+function askDel(txt, ok) { $('dtxt').textContent = txt; dOk = ok; $('dlg').hidden = false; $('dno').focus(); }
+function closeDlg() { $('dlg').hidden = true; dOk = null; }
+$('dno').onclick = closeDlg;
+$('dyes').onclick = function () { var f = dOk; closeDlg(); if (f) f(); };
+$('dlg').onclick = function (ev) { if (ev.target === this) closeDlg(); };
+document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) closeDlg(); });
 var curKind = 'Film';
 function pickKind(v) {
   curKind = v; $('kval').textContent = v; $('n').placeholder = PH[v];
