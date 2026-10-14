@@ -43,8 +43,12 @@ ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .chk svg{width:24px;height:24px;fill:none;stroke:var(--on);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:26;stroke-dashoffset:26;transition:stroke-dashoffset .35s .1s}
 .done>.chk{background:var(--acc);border-color:var(--acc);transform:scale(1.08)}
 .done>.chk svg{stroke-dashoffset:0}
-.t{flex:0 1 auto;min-width:0;color:var(--tx);text-decoration:none;word-break:break-word;padding:4px 2px;border-radius:8px;border:0;text-align:left;cursor:pointer;background:linear-gradient(var(--acc),var(--acc)) no-repeat 0 55%/0 3px;transition:background-size .45s,color .35s}
-.done .t{background-size:100% 3px;color:var(--mut)}
+.t{flex:0 1 auto;min-width:0;color:var(--tx);text-decoration:none;word-break:break-word;padding:4px 2px;border-radius:8px;border:0;text-align:left;cursor:pointer;position:relative;transition:color .35s}
+.done .t{color:var(--mut)}
+.ov{position:absolute;left:0;top:0;right:0;bottom:0;padding:4px 2px;color:transparent;pointer-events:none;text-decoration-line:line-through;-webkit-text-decoration-color:var(--acc);text-decoration-color:var(--acc);text-decoration-thickness:2.5px;opacity:0;-webkit-clip-path:inset(0 100% 0 0);clip-path:inset(0 100% 0 0);transition:clip-path .5s ease,-webkit-clip-path .5s ease,opacity 0s .5s}
+.done .ov{opacity:1;-webkit-clip-path:inset(0 0 0 0);clip-path:inset(0 0 0 0);transition:clip-path .5s ease,-webkit-clip-path .5s ease,opacity 0s 0s}
+.ov .yr{background:transparent;color:transparent}
+.done .tx .yr{opacity:.75}
 .k{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;height:28px;padding:0 12px;font-size:.65em;color:var(--mut);border:1px solid var(--mut);border-radius:999px;text-decoration:none}
 .k svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .chev{flex:none;width:30px;height:30px;border-radius:50%;background:var(--card2);border:0;color:var(--mut);cursor:pointer;padding:0;display:grid;place-items:center;justify-self:end}
@@ -101,9 +105,9 @@ body.edit .del{display:grid}
 :root[data-c="a"] .k-f,:root[data-c="t"] .k-f{--acc:#ff6b6b;--on:#1a0809;--bar:#ff6b6b;--tint:rgba(255,107,107,.10)}
 :root[data-c="a"] .k-d,:root[data-c="t"] .k-d{--acc:#3ddc84;--on:#07140c;--bar:#3ddc84;--tint:rgba(61,220,132,.10)}
 :root[data-c="a"] .k-o,:root[data-c="t"] .k-o{--acc:#ffd24a;--on:#1a1400;--bar:#ffd24a;--tint:rgba(255,210,74,.10)}
-:root[data-m="light"][data-c="a"] .k-f,:root[data-m="light"][data-c="t"] .k-f{--acc:#e5484d;--on:#fff;--bar:#e5484d;--tint:rgba(229,72,77,.09)}
-:root[data-m="light"][data-c="a"] .k-d,:root[data-m="light"][data-c="t"] .k-d{--acc:#16a34a;--on:#fff;--bar:#16a34a;--tint:rgba(22,163,74,.10)}
-:root[data-m="light"][data-c="a"] .k-o,:root[data-m="light"][data-c="t"] .k-o{--acc:#e0a400;--on:#1a1400;--bar:#e0a400;--tint:rgba(224,164,0,.13)}
+:root[data-m="light"][data-c="a"] .k-f,:root[data-m="light"][data-c="t"] .k-f{--acc:#e5484d;--on:#fff;--bar:#e5484d;--tint:rgba(229,72,77,.22);--ring:rgba(229,72,77,.34)}
+:root[data-m="light"][data-c="a"] .k-d,:root[data-m="light"][data-c="t"] .k-d{--acc:#16a34a;--on:#fff;--bar:#16a34a;--tint:rgba(22,163,74,.22);--ring:rgba(22,163,74,.34)}
+:root[data-m="light"][data-c="a"] .k-o,:root[data-m="light"][data-c="t"] .k-o{--acc:#e0a400;--on:#1a1400;--bar:#e0a400;--tint:rgba(224,164,0,.28);--ring:rgba(224,164,0,.40)}
 :root{--star:#f6c344}
 :root[data-m="light"]{--star:#e29f00}
 .star{display:none;order:-1;flex:none;width:30px;height:30px;border-radius:50%;background:var(--card2);border:0;color:var(--mut);cursor:pointer;padding:0;place-items:center;justify-self:end;transition:opacity .28s,transform .28s,color .2s,background-color .2s}
@@ -159,7 +163,7 @@ body.edit .pen{display:grid}
 .ep.gray{filter:grayscale(1);opacity:.58}
 .g.gray .ep.gray{opacity:1}
 /* yıl etiketi */
-.yr{display:inline-block;margin-left:8px;padding:1px 9px;border-radius:999px;background:var(--card2);color:var(--mut);font-size:.7em;font-weight:500;line-height:1.6;letter-spacing:.02em;vertical-align:.08em;font-variant-numeric:tabular-nums}
+.yr{display:inline;margin-left:8px;padding:3px 9px;border-radius:999px;background:var(--card2);color:var(--mut);font-size:.7em;font-weight:500;letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
 .fav .yr{background:var(--gtint);color:var(--g1)}
 .add .y{flex:0 0 84px;text-align:center}
 /* arşiv butonu + üç nokta menüsü */
@@ -187,6 +191,9 @@ body.edit .more{display:grid}
 .dbtns .ayes{background:transparent;color:var(--atx);border:1.5px solid var(--abd);transition:background-color .2s,color .2s,border-color .2s}
 .dbtns .ayes:hover,.dbtns .ayes:active,.dbtns .ayes:focus-visible{background:var(--arc);border-color:var(--arc);color:#fff}
 @keyframes mpop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+:root[data-m="light"] .f:not(.fav),:root[data-m="light"] .g:not(.fav){box-shadow:inset 0 0 0 1px var(--ring,transparent)}
+:root[data-m="light"] .f:not(.fav)::before,:root[data-m="light"] .g:not(.fav)::before{background:linear-gradient(90deg,var(--tint,transparent),transparent 80%)}
+.f.lnk,.ep.lnk{cursor:pointer}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -477,8 +484,12 @@ function mkChk(fn) {
   c.className = 'chk'; c.setAttribute('aria-label', 'İzlendi'); c.innerHTML = SVG; c.onclick = fn; return c;
 }
 function fillTitle(el, x) {
-  el.textContent = x.t;
-  if (x.y) { var sp = document.createElement('span'); sp.className = 'yr'; sp.textContent = x.y; el.appendChild(sp); }
+  var y = (x.y && x.k !== 'Diğer') ? x.y : '';
+  var tx = document.createElement('span'), ov = document.createElement('span');
+  tx.className = 'tx'; ov.className = 'ov'; ov.setAttribute('aria-hidden', 'true');
+  tx.appendChild(document.createTextNode(x.t)); ov.appendChild(document.createTextNode(x.t));
+  if (y) [tx, ov].forEach(function (p) { var sp = document.createElement('span'); sp.className = 'yr'; sp.textContent = y; p.appendChild(sp); });
+  el.textContent = ''; el.appendChild(tx); el.appendChild(ov);
 }
 function mkLink(x) {
   var a = document.createElement('a');
@@ -570,7 +581,8 @@ function mkKind(t) { var k = document.createElement('span'); k.className = 'k'; 
 
 function buildFilm(x) {
   var li = document.createElement('li');
-  li.className = 'f k-' + CL[x.k] + (isW(x) ? ' done gray' : '') + favCls(x); li.setAttribute('data-id', x.id);
+  li.className = 'f k-' + CL[x.k] + (isW(x) ? ' done gray' : '') + favCls(x) + (x.u ? ' lnk' : ''); li.setAttribute('data-id', x.id);
+  li.onclick = function (ev) { if (ev.target.closest('.chk,.more,.star,a')) return; if (x.u) window.open(x.u, '_blank', 'noopener'); };
   li.appendChild(mkChk(function () { var v = !isW(x); setW(x, v); li.classList.toggle('done', v); stats(); doneFx(li, v, x.id); }));
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
@@ -638,7 +650,8 @@ function buildSeries(s) {
   if (s.e.length) {
     var ul = document.createElement('ul');
     s.e.forEach(function (e) {
-      var el = document.createElement('li'); el.className = 'ep' + (isW(e) ? ' done' : '');
+      var el = document.createElement('li'); el.className = 'ep' + (isW(e) ? ' done' : '') + (e.u ? ' lnk' : '');
+      el.onclick = function (ev) { if (ev.target.closest('.chk,.more,a')) return; if (e.u) window.open(e.u, '_blank', 'noopener'); };
       el.appendChild(mkChk(function () { var was = doneS(s); setW(e, !isW(e)); sync(); doneChg(was); }));
       el.appendChild(mkLink(e));
       el.appendChild(mkMore(function () { return epEntries(s, e); }));
@@ -732,7 +745,7 @@ function itemEntries(x, li) {
   var label = x.k === 'Dizi' ? 'Diziyi düzenle' : (x.k === 'Film' ? 'Filmi düzenle' : 'İçeriği düzenle');
   var extra = (x.k === 'Dizi' && eps(x).length) ? ' ve ' + eps(x).length + ' bölümü' : '';
   return [
-    { ic: SVGPEN, t: 'Düzenle', fn: function () { askEdit(label, x, true, function (n, u, y) { x.t = n; x.u = u; if (y) x.y = y; else delete x.y; render(); save(); }); } },
+    { ic: SVGPEN, t: 'Düzenle', fn: function () { askEdit(label, x, x.k !== 'Diğer', function (n, u, y) { x.t = n; x.u = u; if (y) x.y = y; else delete x.y; render(); save(); }); } },
     x.a ? { ic: SVGARC, t: 'Arşivden çıkar', cls: 'marc', fn: function () { x.a = false; save(); goneFx(li, x.id); toast('Arşivden çıkarıldı', true); } }
         : { ic: SVGARC, t: 'Arşivle', cls: 'marc', fn: function () { askArc('"' + x.t + '"' + extra + ' arşive taşınacak. İstediğin zaman geri alabilirsin.', function () { x.a = true; save(); goneFx(li, x.id); toast('Arşive taşındı', true); }); } },
     { ic: SVGX, t: 'Sil', cls: 'mdel', fn: function () { askDel('"' + x.t + '"' + extra + ' listeden kaldırılacak.', function () { S.items = S.items.filter(function (z) { return z.id !== x.id; }); render(); save(); }); } }
@@ -781,6 +794,7 @@ document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || 
 var curKind = 'Film';
 function pickKind(v) {
   curKind = v; $('kval').textContent = v; $('n').placeholder = PH[v];
+  $('y').hidden = (v === 'Diğer'); if (v === 'Diğer') $('y').value = '';
   $('kopts').hidden = true; $('ksel').classList.remove('open');
   Array.prototype.forEach.call($('kopts').children, function (b) { b.className = b.textContent === v ? 'sel1' : ''; });
 }
@@ -794,9 +808,9 @@ document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || 
 pickKind('Film');
 $('add').onsubmit = function (ev) {
   ev.preventDefault();
-  var t = $('n').value.trim(), y = fixYear($('y').value);
+  var t = $('n').value.trim(), y = curKind === 'Diğer' ? '' : fixYear($('y').value);
   if (!t) return;
-  var mm = t.match(/\s*\((\d{4})\)\s*$/);
+  var mm = curKind === 'Diğer' ? null : t.match(/\s*\((\d{4})\)\s*$/);
   if (mm) { if (!y) y = fixYear(mm[1]); t = t.replace(/\s*\((\d{4})\)\s*$/, '').trim() || t; }
   var k = curKind, x = { id: uid(), t: t, u: fixUrl($('u').value), k: k, w: false };
   if (y) x.y = y;
