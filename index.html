@@ -40,7 +40,7 @@ ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .f,.g{position:relative;background:var(--card);border-radius:16px}
 .f,.row,.ep{display:flex;align-items:center;gap:14px;padding:12px 14px}
 .chk{flex:none;width:40px;height:40px;border-radius:50%;border:3px solid var(--mut);background:transparent;cursor:pointer;display:grid;place-items:center;padding:0;transition:background .25s,border-color .25s,transform .25s}
-.chk svg{width:24px;height:24px;fill:none;stroke:var(--on);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:26;stroke-dashoffset:26;transition:stroke-dashoffset .35s .1s}
+.chk svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:26;stroke-dashoffset:26;transition:stroke-dashoffset .35s .1s}
 .done>.chk{background:var(--acc);border-color:var(--acc);transform:scale(1.08)}
 .done>.chk svg{stroke-dashoffset:0}
 .t{flex:0 1 auto;min-width:0;color:var(--tx);text-decoration:none;word-break:break-word;padding:4px 2px;border-radius:8px;border:0;text-align:left;cursor:pointer;position:relative;background:none;transition:color .35s}
@@ -195,6 +195,12 @@ body.edit .more{display:grid}
 .dbtns .ayes:hover,.dbtns .ayes:active,.dbtns .ayes:focus-visible{background:var(--arc);border-color:var(--arc);color:#fff}
 @keyframes mpop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 .f.lnk,.ep.lnk{cursor:pointer}
+.k-o .chk svg{stroke:var(--on)}
+:root[data-m="light"] .fav.f,:root[data-m="light"] .fav.g{--card2:#f2e6bf}
+:root[data-m="light"] .fav .ep .more{background:rgba(255,255,255,.6)}
+/* satırın tamamı gerçek bir bağlantı (butonlar üstte kalır) */
+.rl{position:absolute;left:0;top:0;right:0;bottom:0;z-index:1;border-radius:inherit}
+.f .chk,.f .more,.f .star,.f .t,.ep .chk,.ep .more,.ep .t{position:relative;z-index:2}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -449,7 +455,7 @@ applyTheme();
 /* ---------- liste ---------- */
 var G1 = [['all','Tümü'],['todo','İzlenmedi']], G2 = [['Film','Film'],['Dizi','Dizi'],['Diğer','Diğer']];
 var CL = { all: 'a', Film: 'f', Dizi: 'd', 'Diğer': 'o', todo: 't' };
-var PH = { Film: 'Film Adı', Dizi: 'Dizi Adı', 'Diğer': 'Diğer Adı' };
+var PH = { Film: 'Film Adı', Dizi: 'Dizi Adı', 'Diğer': 'Adı' };
 var SVG = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 var SVGX = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 var SVGCH = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -580,10 +586,15 @@ function mkPen(x, label) {
 }
 function mkKind(t) { var k = document.createElement('span'); k.className = 'k'; k.textContent = t; return k; }
 
+function mkRowLink(u) {
+  var a = document.createElement('a');
+  a.className = 'rl'; a.href = u; a.target = '_blank'; a.rel = 'noopener'; a.tabIndex = -1; a.setAttribute('aria-hidden', 'true');
+  return a;
+}
 function buildFilm(x) {
   var li = document.createElement('li');
   li.className = 'f k-' + CL[x.k] + (isW(x) ? ' done gray' : '') + favCls(x) + (x.u ? ' lnk' : ''); li.setAttribute('data-id', x.id);
-  li.onclick = function (ev) { if (ev.target.closest('.chk,.more,.star,a')) return; if (x.u) window.open(x.u, '_blank', 'noopener'); };
+  if (x.u) li.appendChild(mkRowLink(x.u));
   li.appendChild(mkChk(function () { var v = !isW(x); setW(x, v); li.classList.toggle('done', v); stats(); doneFx(li, v, x.id); }));
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
@@ -652,7 +663,7 @@ function buildSeries(s) {
     var ul = document.createElement('ul');
     s.e.forEach(function (e) {
       var el = document.createElement('li'); el.className = 'ep' + (isW(e) ? ' done' : '') + (e.u ? ' lnk' : '');
-      el.onclick = function (ev) { if (ev.target.closest('.chk,.more,a')) return; if (e.u) window.open(e.u, '_blank', 'noopener'); };
+      if (e.u) el.appendChild(mkRowLink(e.u));
       el.appendChild(mkChk(function () { var was = doneS(s); setW(e, !isW(e)); sync(); doneChg(was); }));
       el.appendChild(mkLink(e));
       el.appendChild(mkMore(function () { return epEntries(s, e); }));
