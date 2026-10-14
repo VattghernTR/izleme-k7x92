@@ -43,7 +43,7 @@ ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .chk svg{width:24px;height:24px;fill:none;stroke:var(--on);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:26;stroke-dashoffset:26;transition:stroke-dashoffset .35s .1s}
 .done>.chk{background:var(--acc);border-color:var(--acc);transform:scale(1.08)}
 .done>.chk svg{stroke-dashoffset:0}
-.t{flex:1;min-width:0;color:var(--tx);text-decoration:none;word-break:break-word;padding:4px 2px;border-radius:8px;border:0;text-align:left;cursor:pointer;background:linear-gradient(var(--acc),var(--acc)) no-repeat 0 55%/0 3px;transition:background-size .45s,color .35s}
+.t{flex:0 1 auto;min-width:0;color:var(--tx);text-decoration:none;word-break:break-word;padding:4px 2px;border-radius:8px;border:0;text-align:left;cursor:pointer;background:linear-gradient(var(--acc),var(--acc)) no-repeat 0 55%/0 3px;transition:background-size .45s,color .35s}
 .done .t{background-size:100% 3px;color:var(--mut)}
 .k{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;height:28px;padding:0 12px;font-size:.65em;color:var(--mut);border:1px solid var(--mut);border-radius:999px;text-decoration:none}
 .k svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
@@ -64,7 +64,7 @@ body.edit .del{display:grid}
 .noep{color:var(--mut);font-size:.8em;padding:4px 2px}
 .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .main{flex:1;min-width:0;display:flex;align-items:center;gap:14px}
-.acts{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap}
+.acts{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap;margin-left:auto}
 .prog{display:flex;align-items:center;gap:10px;padding:0 14px 12px 68px}
 .bar{flex:1;height:8px;border-radius:999px;background:var(--card2);overflow:hidden}
 .bar i{display:block;height:100%;width:0;border-radius:999px;background-color:var(--acc);background-image:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.32));transition:width .6s cubic-bezier(.4,0,.2,1),background-color .4s}
@@ -158,6 +158,35 @@ body.edit .pen{display:grid}
 .ep{position:relative}
 .ep.gray{filter:grayscale(1);opacity:.58}
 .g.gray .ep.gray{opacity:1}
+/* yıl etiketi */
+.yr{display:inline-block;margin-left:8px;padding:1px 9px;border-radius:999px;background:var(--card2);color:var(--mut);font-size:.7em;font-weight:500;line-height:1.6;letter-spacing:.02em;vertical-align:.08em;font-variant-numeric:tabular-nums}
+.fav .yr{background:var(--gtint);color:var(--g1)}
+.add .y{flex:0 0 84px;text-align:center}
+/* arşiv butonu + üç nokta menüsü */
+.hb{display:flex;gap:8px;align-items:flex-start;flex:none}
+#abtn{display:none}
+body.edit #abtn{display:grid}
+.mbtn.on{background:var(--acc);color:var(--on)}
+body.arch #add{display:none!important}
+.more{display:none;flex:none;width:30px;height:30px;border-radius:50%;background:var(--card2);border:0;color:var(--mut);cursor:pointer;padding:0;place-items:center;justify-self:end;transition:color .2s,background-color .2s}
+.more svg{width:16px;height:16px;fill:currentColor;stroke:none}
+.more:hover{color:var(--tx)}
+body.edit .more{display:grid}
+.ep .more{background:var(--card);margin-left:auto}
+:root{--atx:#3fd0c0;--abd:#1b7f74;--arc:#1FA698}
+:root[data-m="light"]{--atx:#13796e;--abd:#8fd1c9}
+.imenu{position:fixed;z-index:40;min-width:172px;background:var(--card2);border:1px solid var(--card);border-radius:14px;padding:5px;box-shadow:0 10px 30px rgba(0,0,0,.4);transform-origin:top right;animation:mpop .16s ease-out}
+.imenu.up{transform-origin:bottom right}
+.imenu button{display:flex;align-items:center;gap:10px;width:100%;background:transparent;border:0;color:var(--tx);padding:9px 12px;border-radius:9px;font-size:.78em;text-align:left;cursor:pointer;transition:background-color .15s,color .15s}
+.imenu button:hover{background:var(--card)}
+.imenu svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none;opacity:.9}
+.imenu .marc:hover{background:rgba(31,166,152,.16);color:var(--atx)}
+.imenu .mdel{color:var(--dtx)}
+.imenu .mdel:hover{background:var(--dfill);color:#fff}
+.dico.aico{background:rgba(31,166,152,.15);color:var(--atx)}
+.dbtns .ayes{background:transparent;color:var(--atx);border:1.5px solid var(--abd);transition:background-color .2s,color .2s,border-color .2s}
+.dbtns .ayes:hover,.dbtns .ayes:active,.dbtns .ayes:focus-visible{background:var(--arc);border-color:var(--arc);color:#fff}
+@keyframes mpop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -184,7 +213,7 @@ body.edit .pen{display:grid}
 .menu{position:absolute;right:0;top:50px;z-index:10;min-width:220px;background:var(--card2);border-radius:14px;padding:6px;box-shadow:0 8px 28px rgba(0,0,0,.35);animation:fade .15s}
 .menu button{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;padding:12px;border-radius:10px;cursor:pointer;text-align:left;font-size:.8em}
 .menu button:hover{background:var(--card)}
-@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}.tabs{flex-direction:column;align-items:flex-start;gap:8px}.sep{display:none}.f,.row{align-items:flex-start}.main{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px 8px;align-items:center}.f .main{grid-template-areas:"t t d" "a s e"}.g .main{grid-template-areas:"t s d" "a e c"}.star{grid-area:s}.pen{grid-area:e}.main .t{grid-area:t;flex:none}.acts{display:contents}.meta{grid-area:a}.chev{grid-area:c}.del{grid-area:d}.k{font-size:.72em}.prog{padding:0 12px 12px 56px}.bar{height:6px}}
+@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}.tabs{flex-direction:column;align-items:flex-start;gap:8px}.sep{display:none}.f,.row{align-items:flex-start}.main{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px 8px;align-items:center}.f .main{grid-template-areas:"t s d" "a a a"}.g .main{grid-template-areas:"t s d" "a a c"}.star{grid-area:s}.more{grid-area:d}.main .t{grid-area:t;flex:none;justify-self:start;max-width:100%}.acts{display:contents}.meta{grid-area:a}.chev{grid-area:c}.del{grid-area:d}.k{font-size:.72em}.prog{padding:0 12px 12px 56px}.bar{height:6px}}
 </style>
 </head>
 <body>
@@ -210,7 +239,7 @@ body.edit .pen{display:grid}
 <div class="wrap" id="app" hidden>
   <div class="top">
     <div><h1>🎬 İzleme Listem</h1><p class="sub" id="sub"></p></div>
-    <div class="mwrap">
+    <div class="hb"><button id="abtn" class="mbtn" type="button" aria-label="Arşiv"></button><div class="mwrap">
       <button id="mbtn" class="mbtn" type="button" aria-label="Menü"></button>
       <div id="menu" class="menu" hidden>
         <button id="mtheme" type="button"></button>
@@ -218,11 +247,13 @@ body.edit .pen{display:grid}
         <button id="mout" type="button"></button>
       </div>
     </div>
+    </div>
   </div>
   <div class="tabs" id="tabs"></div>
   <form class="add" id="add">
     <input class="n" id="n" placeholder="Film Adı" required>
     <input class="u" id="u" placeholder="Bağlantı" inputmode="url">
+    <input class="y" id="y" placeholder="Yıl" inputmode="numeric" maxlength="4" autocomplete="off">
     <div class="sel" id="ksel"><button type="button" id="kbtn" class="selbtn" aria-haspopup="listbox"><span id="kval">Film</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="opts" id="kopts" role="listbox" hidden></div></div>
     <button type="submit">Ekle</button>
   </form>
@@ -241,15 +272,25 @@ body.edit .pen{display:grid}
     <div class="dico eico"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
     <h2 id="etitle">Düzenle</h2>
     <div class="efield"><label for="ename">Ad</label><input id="ename" autocomplete="off"></div>
+    <div class="efield" id="eyf"><label for="eyear">Yıl (isteğe bağlı)</label><input id="eyear" inputmode="numeric" maxlength="4" autocomplete="off"></div>
     <div class="efield"><label for="eurl">Bağlantı</label><input id="eurl" inputmode="url" autocomplete="off"></div>
     <div class="dbtns"><button type="button" id="eno" class="dno">İptal</button><button type="submit" class="eyes">Kaydet</button></div>
   </form>
 </div>
+<div class="ovl" id="adlg" hidden>
+  <div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="atitle">
+    <div class="dico aico"><svg viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div>
+    <h2 id="atitle">Arşive taşınsın mı?</h2>
+    <p id="atxt"></p>
+    <div class="dbtns"><button type="button" id="ano" class="dno">İptal</button><button type="button" id="ayes" class="ayes">Arşivle</button></div>
+  </div>
+</div>
+<div class="imenu" id="imenu" hidden></div>
 <div id="toast"></div>
 <script>
 var PK = 'izleme_pw', TK = 'izleme_tok', LK = 'izleme_yerel_v1', OKEY = 'izleme_acik_v1';
 var OWN = location.hostname.split('.')[0], REPO = location.pathname.split('/')[1] || '';
-var S = { items: [] }, filter = 'all', canEdit = false, needSetup = false, local = {}, open = {}, pw = '', tok = '';
+var S = { items: [] }, filter = 'all', archMode = false, canEdit = false, needSetup = false, local = {}, open = {}, pw = '', tok = '';
 function ls(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
 function lset(k, v) { try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (e) {} }
 pw = ls(PK); tok = ls(TK);
@@ -375,7 +416,7 @@ $('mbtn').innerHTML = IC.gear;
 $('mpw').innerHTML = IC.key + '<span>Şifreyi Değiştir</span>';
 $('mout').innerHTML = IC.out + '<span>Çıkış Yap</span>';
 $('mtheme').onclick = function () { mode = ({ dark: 'light', light: 'auto', auto: 'dark' })[mode]; lset(MK, mode); applyTheme(); };
-$('mbtn').onclick = function (ev) { ev.stopPropagation(); $('menu').hidden = !$('menu').hidden; };
+$('mbtn').onclick = function (ev) { ev.stopPropagation(); closeMenu(); $('menu').hidden = !$('menu').hidden; };
 document.addEventListener('click', function (ev) { if (!$('menu').hidden && !$('menu').contains(ev.target)) $('menu').hidden = true; });
 document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) $('menu').hidden = true; });
 $('mpw').onclick = function () {
@@ -406,8 +447,11 @@ var SVGX = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 var SVGCH = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
 var SVGSTAR = '<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
 var SVGPEN = '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>';
+var SVGARC = '<svg viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>';
+var SVGMORE = '<svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>';
 var SVGLINK = '<svg viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg>';
 var uid = function () { return Date.now().toString(36) + Math.random().toString(36).slice(2, 5); };
+var fixYear = function (v) { v = String(v || '').replace(/\D/g, '').slice(0, 4); return (v.length === 4 && +v >= 1880 && +v <= 2100) ? v : ''; };
 var fixUrl = function (u) { u = (u || '').trim(); return (u && !/^https?:\/\//i.test(u)) ? 'https://' + u : u; };
 
 function isW(x) { return (x.id in local) ? local[x.id] : !!x.w; }
@@ -421,19 +465,24 @@ function setW(x, v) {
 function stats() {
   var tot = 0, seen = 0, cat = (filter === 'Film' || filter === 'Dizi' || filter === 'Diğer');
   S.items.forEach(function (x) {
+    if (!!x.a !== archMode) return;
     if (cat && x.k !== filter) return;
     if (x.k === 'Dizi' && eps(x).length) { eps(x).forEach(function (e) { tot++; if (isW(e)) seen++; }); }
     else { tot++; if (isW(x)) seen++; }
   });
-  $('sub').textContent = !tot ? '' : (filter === 'todo' ? (tot - seen) + ' izlenmeyi bekliyor' : seen + ' / ' + tot + ' izlendi');
+  $('sub').textContent = (archMode ? 'Arşiv' + (tot ? ' · ' : '') : '') + (!tot ? '' : (filter === 'todo' ? (tot - seen) + ' izlenmeyi bekliyor' : seen + ' / ' + tot + ' izlendi'));
 }
 function mkChk(fn) {
   var c = document.createElement('button');
   c.className = 'chk'; c.setAttribute('aria-label', 'İzlendi'); c.innerHTML = SVG; c.onclick = fn; return c;
 }
+function fillTitle(el, x) {
+  el.textContent = x.t;
+  if (x.y) { var sp = document.createElement('span'); sp.className = 'yr'; sp.textContent = x.y; el.appendChild(sp); }
+}
 function mkLink(x) {
   var a = document.createElement('a');
-  a.className = 't'; a.textContent = x.t;
+  a.className = 't'; fillTitle(a, x);
   if (x.u) { a.href = x.u; a.target = '_blank'; a.rel = 'noopener'; } else { a.tabIndex = -1; }
   return a;
 }
@@ -526,8 +575,8 @@ function buildFilm(x) {
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
   main.appendChild(mkLink(x));
-  var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(mkKind(x.k)); acts.appendChild(meta); acts.appendChild(mkStar(x)); acts.appendChild(mkPen(x, x.k === 'Film' ? 'Filmi düzenle' : 'İçeriği düzenle'));
-  acts.appendChild(mkDel(function () { askDel('"' + x.t + '" listeden kaldırılacak.', function () { S.items = S.items.filter(function (z) { return z.id !== x.id; }); render(); save(); }); }));
+  var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(mkKind(x.k)); acts.appendChild(meta); acts.appendChild(mkStar(x));
+  acts.appendChild(mkMore(function () { return itemEntries(x, li); }));
   main.appendChild(acts); li.appendChild(main);
   return li;
 }
@@ -564,7 +613,7 @@ function buildSeries(s) {
     lset(OKEY, JSON.stringify(open));
   }
   var title = document.createElement('button');
-  title.className = 't'; title.textContent = s.t;
+  title.className = 't'; fillTitle(title, s);
   var chev = document.createElement('button');
   chev.className = 'chev'; chev.innerHTML = SVGCH; chev.tabIndex = -1; chev.setAttribute('aria-hidden', 'true');
   var main = document.createElement('div'); main.className = 'main';
@@ -580,11 +629,10 @@ function buildSeries(s) {
   acts.appendChild(meta);
   acts.appendChild(mkStar(s));
   acts.appendChild(chev);
-  acts.appendChild(mkPen(s, 'Diziyi düzenle'));
-  acts.appendChild(mkDel(function () { askDel('"' + s.t + '"' + (s.e.length ? ' ve ' + s.e.length + ' bölümü' : '') + ' listeden kaldırılacak.', function () { S.items = S.items.filter(function (z) { return z.id !== s.id; }); render(); save(); }); }));
+  acts.appendChild(mkMore(function () { return itemEntries(s, li); }));
   main.appendChild(acts); head.appendChild(main);
   li.appendChild(head); li.appendChild(prog);
-  li.onclick = function (ev) { if (ev.target.closest('.eps,.chk,.del,.star,.pen,a')) return; tog(); };
+  li.onclick = function (ev) { if (ev.target.closest('.eps,.chk,.more,.star,a')) return; tog(); };
 
   var box = document.createElement('div'); box.className = 'eps';
   if (s.e.length) {
@@ -593,8 +641,7 @@ function buildSeries(s) {
       var el = document.createElement('li'); el.className = 'ep' + (isW(e) ? ' done' : '');
       el.appendChild(mkChk(function () { var was = doneS(s); setW(e, !isW(e)); sync(); doneChg(was); }));
       el.appendChild(mkLink(e));
-      el.appendChild(mkPen(e, 'Bölümü düzenle'));
-      el.appendChild(mkDel(function () { askDel('"' + e.t + '" listeden kaldırılacak.', function () { s.e = s.e.filter(function (z) { return z.id !== e.id; }); render(); save(); }); }));
+      el.appendChild(mkMore(function () { return epEntries(s, e); }));
       ul.appendChild(el); epEls.push({ el: el, x: e });
     });
     box.appendChild(ul);
@@ -638,6 +685,7 @@ function render() {
   grp(G2);
   var ul = $('list'); ul.textContent = '';
   var items = S.items.filter(function (x) {
+    if (!!x.a !== archMode) return false;
     if (filter === 'all') return true;
     if (filter === 'todo') return !doneX(x);
     return x.k === filter;
@@ -647,17 +695,72 @@ function render() {
   stats();
   if (!items.length) {
     var e = document.createElement('li'); e.className = 'empty';
-    e.textContent = S.items.length ? 'Bu filtrede bir şey yok.' : (canEdit ? 'Henüz bir şey yok. Yukarıdan ekle.' : 'Liste boş.');
+    e.textContent = archMode ? 'Arşivde bir şey yok.' : S.items.length ? 'Bu filtrede bir şey yok.' : (canEdit ? 'Henüz bir şey yok. Yukarıdan ekle.' : 'Liste boş.');
     ul.appendChild(e); return;
   }
   items.forEach(function (x) { ul.appendChild(x.k === 'Dizi' ? buildSeries(x) : buildFilm(x)); });
 }
 function app() { document.body.classList.toggle('edit', canEdit); $('menu').hidden = true; show('app'); render(); }
 
+var imenu = $('imenu'), imCtx = null;
+function closeMenu() { imenu.hidden = true; imCtx = null; }
+function openMenu(btn, entries) {
+  imenu.textContent = '';
+  entries.forEach(function (e) {
+    var b = document.createElement('button'); b.type = 'button'; if (e.cls) b.className = e.cls;
+    b.innerHTML = e.ic + '<span>' + e.t + '</span>';
+    b.onclick = function () { closeMenu(); e.fn(); };
+    imenu.appendChild(b);
+  });
+  imenu.className = 'imenu'; imenu.hidden = false;
+  var r = btn.getBoundingClientRect(), mw = imenu.offsetWidth, mh = imenu.offsetHeight;
+  var left = Math.max(8, Math.min(r.right - mw, window.innerWidth - mw - 8)), top = r.bottom + 6;
+  if (top + mh > window.innerHeight - 8 && r.top - mh - 6 > 8) { top = r.top - mh - 6; imenu.className = 'imenu up'; }
+  imenu.style.left = left + 'px'; imenu.style.top = top + 'px'; imCtx = btn;
+}
+function mkMore(getEntries) {
+  var b = document.createElement('button');
+  b.className = 'more'; b.innerHTML = SVGMORE; b.setAttribute('aria-label', 'Seçenekler');
+  b.onclick = function () { if (imCtx === b && !imenu.hidden) { closeMenu(); return; } openMenu(b, getEntries()); };
+  return b;
+}
+function goneFx(li, id) {
+  li.style.transition = 'opacity .3s, transform .3s'; li.style.opacity = '0'; li.style.transform = 'translateX(26px)';
+  setTimeout(function () { reorder(id); }, 320);
+}
+function itemEntries(x, li) {
+  var label = x.k === 'Dizi' ? 'Diziyi düzenle' : (x.k === 'Film' ? 'Filmi düzenle' : 'İçeriği düzenle');
+  var extra = (x.k === 'Dizi' && eps(x).length) ? ' ve ' + eps(x).length + ' bölümü' : '';
+  return [
+    { ic: SVGPEN, t: 'Düzenle', fn: function () { askEdit(label, x, true, function (n, u, y) { x.t = n; x.u = u; if (y) x.y = y; else delete x.y; render(); save(); }); } },
+    x.a ? { ic: SVGARC, t: 'Arşivden çıkar', cls: 'marc', fn: function () { x.a = false; save(); goneFx(li, x.id); toast('Arşivden çıkarıldı', true); } }
+        : { ic: SVGARC, t: 'Arşivle', cls: 'marc', fn: function () { askArc('"' + x.t + '"' + extra + ' arşive taşınacak. İstediğin zaman geri alabilirsin.', function () { x.a = true; save(); goneFx(li, x.id); toast('Arşive taşındı', true); }); } },
+    { ic: SVGX, t: 'Sil', cls: 'mdel', fn: function () { askDel('"' + x.t + '"' + extra + ' listeden kaldırılacak.', function () { S.items = S.items.filter(function (z) { return z.id !== x.id; }); render(); save(); }); } }
+  ];
+}
+function epEntries(s, e) {
+  return [
+    { ic: SVGPEN, t: 'Düzenle', fn: function () { askEdit('Bölümü düzenle', e, false, function (n, u) { e.t = n; e.u = u; render(); save(); }); } },
+    { ic: SVGX, t: 'Sil', cls: 'mdel', fn: function () { askDel('"' + e.t + '" listeden kaldırılacak.', function () { s.e = s.e.filter(function (z) { return z.id !== e.id; }); render(); save(); }); } }
+  ];
+}
+var aOk = null;
+function askArc(txt, ok) { $('atxt').textContent = txt; aOk = ok; $('adlg').hidden = false; $('ano').focus(); }
+function closeArc() { $('adlg').hidden = true; aOk = null; }
+$('ano').onclick = closeArc;
+$('ayes').onclick = function () { var f = aOk; closeArc(); if (f) f(); };
+$('adlg').onclick = function (ev) { if (ev.target === this) closeArc(); };
+$('abtn').innerHTML = SVGARC;
+$('abtn').onclick = function () { archMode = !archMode; document.body.classList.toggle('arch', archMode); this.classList.toggle('on', archMode); closeMenu(); render(); };
+document.addEventListener('click', function (ev) { if (!imenu.hidden && !imenu.contains(ev.target) && !(ev.target.closest && ev.target.closest('.more'))) closeMenu(); });
+document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) { closeMenu(); closeArc(); } });
+window.addEventListener('scroll', closeMenu, true); window.addEventListener('resize', closeMenu);
 var eOk = null;
-function askEdit(title, name, url, ok) {
-  $('etitle').textContent = title; $('ename').value = name; $('eurl').value = url || ''; eOk = ok;
-  $('edlg').hidden = false; $('ename').focus(); $('ename').select();
+function askEdit(title, x, withYear, ok) {
+  var n = x.t, y = x.y || '', re = /\s*\((\d{4})\)\s*$/, m;
+  if (withYear && !y && (m = n.match(re))) { y = m[1]; n = n.replace(re, ''); }
+  $('etitle').textContent = title; $('ename').value = n; $('eurl').value = x.u || ''; $('eyear').value = y; $('eyf').hidden = !withYear;
+  eOk = ok; $('edlg').hidden = false; $('ename').focus(); $('ename').select();
 }
 function closeEdit() { $('edlg').hidden = true; eOk = null; }
 $('eno').onclick = closeEdit;
@@ -665,7 +768,7 @@ $('edlg').onclick = function (ev) { if (ev.target === this) closeEdit(); };
 $('eform').onsubmit = function (ev) {
   ev.preventDefault();
   var n = $('ename').value.trim(); if (!n) { $('ename').focus(); return; }
-  var f = eOk, u = fixUrl($('eurl').value); closeEdit(); if (f) f(n, u);
+  var f = eOk, u = fixUrl($('eurl').value), y = fixYear($('eyear').value); closeEdit(); if (f) f(n, u, y);
 };
 document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) closeEdit(); });
 var dOk = null;
@@ -691,12 +794,15 @@ document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || 
 pickKind('Film');
 $('add').onsubmit = function (ev) {
   ev.preventDefault();
-  var t = $('n').value.trim();
+  var t = $('n').value.trim(), y = fixYear($('y').value);
   if (!t) return;
+  var mm = t.match(/\s*\((\d{4})\)\s*$/);
+  if (mm) { if (!y) y = fixYear(mm[1]); t = t.replace(/\s*\((\d{4})\)\s*$/, '').trim() || t; }
   var k = curKind, x = { id: uid(), t: t, u: fixUrl($('u').value), k: k, w: false };
+  if (y) x.y = y;
   if (k === 'Dizi') { x.e = []; open[x.id] = true; lset(OKEY, JSON.stringify(open)); }
   S.items.unshift(x);
-  $('n').value = ''; $('u').value = '';
+  $('n').value = ''; $('u').value = ''; $('y').value = '';
   render(); save();
 };
 start();
