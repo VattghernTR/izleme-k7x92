@@ -43,7 +43,7 @@ ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .chk svg{width:24px;height:24px;fill:none;stroke:var(--on);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:26;stroke-dashoffset:26;transition:stroke-dashoffset .35s .1s}
 .done>.chk{background:var(--acc);border-color:var(--acc);transform:scale(1.08)}
 .done>.chk svg{stroke-dashoffset:0}
-.t{flex:0 1 auto;min-width:0;color:var(--tx);text-decoration:none;word-break:break-word;padding:4px 2px;border-radius:8px;border:0;text-align:left;cursor:pointer;position:relative;transition:color .35s}
+.t{flex:0 1 auto;min-width:0;color:var(--tx);text-decoration:none;word-break:break-word;padding:4px 2px;border-radius:8px;border:0;text-align:left;cursor:pointer;position:relative;background:none;transition:color .35s}
 .done .t{color:var(--mut)}
 .ov{position:absolute;left:0;top:0;right:0;bottom:0;padding:4px 2px;color:transparent;pointer-events:none;text-decoration-line:line-through;-webkit-text-decoration-color:var(--acc);text-decoration-color:var(--acc);text-decoration-thickness:2.5px;opacity:0;-webkit-clip-path:inset(0 100% 0 0);clip-path:inset(0 100% 0 0);transition:clip-path .5s ease,-webkit-clip-path .5s ease,opacity 0s .5s}
 .done .ov{opacity:1;-webkit-clip-path:inset(0 0 0 0);clip-path:inset(0 0 0 0);transition:clip-path .5s ease,-webkit-clip-path .5s ease,opacity 0s 0s}
@@ -105,9 +105,9 @@ body.edit .del{display:grid}
 :root[data-c="a"] .k-f,:root[data-c="t"] .k-f{--acc:#ff6b6b;--on:#1a0809;--bar:#ff6b6b;--tint:rgba(255,107,107,.10)}
 :root[data-c="a"] .k-d,:root[data-c="t"] .k-d{--acc:#3ddc84;--on:#07140c;--bar:#3ddc84;--tint:rgba(61,220,132,.10)}
 :root[data-c="a"] .k-o,:root[data-c="t"] .k-o{--acc:#ffd24a;--on:#1a1400;--bar:#ffd24a;--tint:rgba(255,210,74,.10)}
-:root[data-m="light"][data-c="a"] .k-f,:root[data-m="light"][data-c="t"] .k-f{--acc:#e5484d;--on:#fff;--bar:#e5484d;--tint:rgba(229,72,77,.22);--ring:rgba(229,72,77,.34)}
-:root[data-m="light"][data-c="a"] .k-d,:root[data-m="light"][data-c="t"] .k-d{--acc:#16a34a;--on:#fff;--bar:#16a34a;--tint:rgba(22,163,74,.22);--ring:rgba(22,163,74,.34)}
-:root[data-m="light"][data-c="a"] .k-o,:root[data-m="light"][data-c="t"] .k-o{--acc:#e0a400;--on:#1a1400;--bar:#e0a400;--tint:rgba(224,164,0,.28);--ring:rgba(224,164,0,.40)}
+:root[data-m="light"][data-c="a"] .k-f,:root[data-m="light"][data-c="t"] .k-f{--acc:#e5484d;--on:#fff;--bar:#e5484d;--tint:rgba(229,72,77,.09)}
+:root[data-m="light"][data-c="a"] .k-d,:root[data-m="light"][data-c="t"] .k-d{--acc:#16a34a;--on:#fff;--bar:#16a34a;--tint:rgba(22,163,74,.10)}
+:root[data-m="light"][data-c="a"] .k-o,:root[data-m="light"][data-c="t"] .k-o{--acc:#e0a400;--on:#1a1400;--bar:#e0a400;--tint:rgba(224,164,0,.13)}
 :root{--star:#f6c344}
 :root[data-m="light"]{--star:#e29f00}
 .star{display:none;order:-1;flex:none;width:30px;height:30px;border-radius:50%;background:var(--card2);border:0;color:var(--mut);cursor:pointer;padding:0;place-items:center;justify-self:end;transition:opacity .28s,transform .28s,color .2s,background-color .2s}
@@ -163,7 +163,10 @@ body.edit .pen{display:grid}
 .ep.gray{filter:grayscale(1);opacity:.58}
 .g.gray .ep.gray{opacity:1}
 /* yıl etiketi */
-.yr{display:inline;margin-left:8px;padding:3px 9px;border-radius:999px;background:var(--card2);color:var(--mut);font-size:.7em;font-weight:500;letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.yr{display:inline-block;position:relative;margin-left:8px;padding:1px 9px;border-radius:999px;background:var(--card2);color:var(--mut);font-size:.7em;font-weight:500;line-height:1.6;letter-spacing:.02em;vertical-align:.08em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.yr::after{content:"";position:absolute;left:4px;right:4px;top:50%;height:2px;margin-top:-1px;border-radius:2px;background:var(--acc);transform:scaleX(0);transform-origin:left;transition:transform .3s ease 0s}
+.done .tx .yr::after{transform:scaleX(1);transition:transform .3s ease .3s}
+.ov .yr::after{display:none}
 .fav .yr{background:var(--gtint);color:var(--g1)}
 .add .y{flex:0 0 84px;text-align:center}
 /* arşiv butonu + üç nokta menüsü */
@@ -191,8 +194,6 @@ body.edit .more{display:grid}
 .dbtns .ayes{background:transparent;color:var(--atx);border:1.5px solid var(--abd);transition:background-color .2s,color .2s,border-color .2s}
 .dbtns .ayes:hover,.dbtns .ayes:active,.dbtns .ayes:focus-visible{background:var(--arc);border-color:var(--arc);color:#fff}
 @keyframes mpop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
-:root[data-m="light"] .f:not(.fav),:root[data-m="light"] .g:not(.fav){box-shadow:inset 0 0 0 1px var(--ring,transparent)}
-:root[data-m="light"] .f:not(.fav)::before,:root[data-m="light"] .g:not(.fav)::before{background:linear-gradient(90deg,var(--tint,transparent),transparent 80%)}
 .f.lnk,.ep.lnk{cursor:pointer}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
@@ -448,7 +449,7 @@ applyTheme();
 /* ---------- liste ---------- */
 var G1 = [['all','Tümü'],['todo','İzlenmedi']], G2 = [['Film','Film'],['Dizi','Dizi'],['Diğer','Diğer']];
 var CL = { all: 'a', Film: 'f', Dizi: 'd', 'Diğer': 'o', todo: 't' };
-var PH = { Film: 'Film Adı', Dizi: 'Dizi Adı', 'Diğer': 'Adı' };
+var PH = { Film: 'Film Adı', Dizi: 'Dizi Adı', 'Diğer': 'Diğer Adı' };
 var SVG = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 var SVGX = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 var SVGCH = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -688,7 +689,7 @@ function render() {
       var b = document.createElement('button');
       b.className = 'tab' + (filter === x[0] ? ' on' : '');
       b.textContent = x[1];
-      b.onclick = function () { filter = x[0]; render(); };
+      b.onclick = function () { filter = x[0]; if (x[0] === 'Film' || x[0] === 'Dizi' || x[0] === 'Diğer') pickKind(x[0]); render(); };
       g.appendChild(b);
     });
     tabs.appendChild(g);
@@ -794,7 +795,7 @@ document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || 
 var curKind = 'Film';
 function pickKind(v) {
   curKind = v; $('kval').textContent = v; $('n').placeholder = PH[v];
-  $('y').hidden = (v === 'Diğer'); if (v === 'Diğer') $('y').value = '';
+  $('y').hidden = (v === 'Diğer'); $('y').style.display = (v === 'Diğer') ? 'none' : ''; if (v === 'Diğer') $('y').value = '';
   $('kopts').hidden = true; $('ksel').classList.remove('open');
   Array.prototype.forEach.call($('kopts').children, function (b) { b.className = b.textContent === v ? 'sel1' : ''; });
 }
