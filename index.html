@@ -201,6 +201,12 @@ body.edit .more{display:grid}
 /* satırın tamamı gerçek bir bağlantı (butonlar üstte kalır) */
 .rl{position:absolute;left:0;top:0;right:0;bottom:0;z-index:1;border-radius:inherit}
 .f .chk,.f .more,.f .star,.f .t,.ep .chk,.ep .more,.ep .t{position:relative;z-index:2}
+/* koyu tema: yıldızlı dizinin bölümleri altın tonunda */
+.fav.f,.fav.g{--card2:#312c1a}
+.fav .ep .more{background:rgba(0,0,0,.28)}
+.dlg p.err{color:var(--err)}
+.dlg .sp{margin-bottom:4px}
+.slink{margin-top:14px;background:none;border:0;color:var(--mut);font-size:.72em;text-decoration:underline;cursor:pointer}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -258,6 +264,7 @@ body.edit .more{display:grid}
       <div id="menu" class="menu" hidden>
         <button id="mtheme" type="button"></button>
         <button id="mpw" type="button"></button>
+        <button id="msync" type="button"></button>
         <button id="mout" type="button"></button>
       </div>
     </div>
@@ -298,6 +305,17 @@ body.edit .more{display:grid}
     <p id="atxt"></p>
     <div class="dbtns"><button type="button" id="ano" class="dno">İptal</button><button type="button" id="ayes" class="ayes">Arşivle</button></div>
   </div>
+</div>
+<div class="ovl" id="sdlg" hidden>
+  <form class="dlg" id="sform" role="dialog" aria-modal="true" aria-labelledby="stitle">
+    <div class="dico eico"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+    <h2 id="stitle">Senkronizasyon</h2>
+    <p id="smsg" class="sp"></p>
+    <div class="efield"><label for="srepo">Depo (kullanıcı/depo-adı)</label><input id="srepo" placeholder="kullanici/izleme-durum" autocomplete="off"></div>
+    <div class="efield"><label for="stok">Anahtar</label><input id="stok" type="password" autocomplete="off"></div>
+    <div class="dbtns"><button type="button" id="sno" class="dno">İptal</button><button type="submit" class="eyes">Kaydet</button></div>
+    <button type="button" id="soff" class="slink" hidden>Senkronizasyonu kapat</button>
+  </form>
 </div>
 <div class="imenu" id="imenu" hidden></div>
 <div id="toast"></div>
@@ -374,6 +392,65 @@ function save() {
   }, 800);
 }
 
+/* ---------- izlendi durumu senkronu (ayrı gizli depo, parolayla şifreli) ---------- */
+var W = {}, pend = {}, stEtag = '', stTimer, pollT;
+function SYNCON() { return !!(S && S.sync && S.sync.r && S.sync.t); }
+function sfetch(method, body, etag) {
+  var h = { 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + S.sync.t };
+  if (body) h['Content-Type'] = 'application/json';
+  if (etag) h['If-None-Match'] = etag;
+  return fetch('https://api.github.com/repos/' + S.sync.r + '/contents/state.json', { method: method, cache: 'no-store', headers: h, body: body ? JSON.stringify(body) : undefined });
+}
+function stGet(force) {
+  return sfetch('GET', null, force ? '' : stEtag).then(function (r) {
+    if (r.status === 304) return { same: true };
+    if (r.status === 404) return { sha: '', map: {}, etag: '' };
+    if (!r.ok) throw new Error('Durum okunamadı (' + r.status + ')');
+    var et = r.headers.get('ETag') || '';
+    return r.json().then(function (j) {
+      return decrypt(atob(j.content.replace(/\n/g, '')), pw).then(function (d) { return { sha: j.sha, map: (d && d.w) || {}, etag: et }; },
+        function () { return { sha: j.sha, map: {}, etag: et }; });
+    });
+  });
+}
+function loadState(force) {
+  if (!SYNCON()) return Promise.resolve(false);
+  return stGet(force).then(function (o) {
+    if (o.same) return false;
+    stEtag = o.etag;
+    var m = o.map, k; for (k in pend) m[k] = pend[k];
+    var ch = JSON.stringify(m) !== JSON.stringify(W); W = m; return ch;
+  });
+}
+function saveState() {
+  clearTimeout(stTimer);
+  stTimer = setTimeout(function () { stFlush(0).then(null, function (e) { toast((e && e.message) || 'Durum kaydedilemedi'); }); }, 700);
+}
+function stFlush(n) {
+  if (!SYNCON()) return Promise.resolve();
+  return stGet(true).then(function (o) {
+    var m = o.map, snap = {}, k;
+    for (k in pend) { m[k] = pend[k]; snap[k] = pend[k]; }
+    return encrypt({ v: 1, w: m }, pw).then(function (txt) {
+      var b = { message: 'durum', content: btoa(txt) }; if (o.sha) b.sha = o.sha;
+      return sfetch('PUT', b);
+    }).then(function (r) {
+      if ((r.status === 409 || r.status === 422) && n < 2) return stFlush(n + 1);
+      if (!r.ok) throw new Error('Durum kaydedilemedi (' + r.status + ')');
+      for (k in snap) if (pend[k] === snap[k]) delete pend[k];
+      W = m; stEtag = '';
+    });
+  });
+}
+function stWriteAll() {
+  return stGet(true).then(function (o) {
+    return encrypt({ v: 1, w: W }, pw).then(function (txt) {
+      var b = { message: 'durum', content: btoa(txt) }; if (o.sha) b.sha = o.sha;
+      return sfetch('PUT', b);
+    });
+  }).then(function (r) { if (!r.ok) throw new Error('Durum kaydedilemedi (' + r.status + ')'); stEtag = ''; });
+}
+
 /* ---------- ekranlar ---------- */
 function show(w) { $('load').hidden = w !== 'load'; $('gate').hidden = w !== 'gate'; $('app').hidden = w !== 'app'; $('pwf').hidden = w !== 'pwf'; }
 function gate(msg, bad) {
@@ -394,7 +471,7 @@ function start() {
     }
     needSetup = false;
     if (!pw) return gate('');
-    return decrypt(txt, pw).then(function (d) { S = d; if (!S.items) S.items = []; canEdit = !!tok; app(); },
+    return decrypt(txt, pw).then(function (d) { S = d; if (!S.items) S.items = []; canEdit = !!tok; return loadState(true).then(app, app); },
       function () { pw = ''; lset(PK, ''); gate('Parola yanlış.', true); });
   }).catch(function (e) { gate('Hata: ' + (e && e.message || e), true); });
 }
@@ -439,15 +516,18 @@ $('mpw').onclick = function () {
   $('pmsg').textContent = 'Yeni parolanı iki kere yaz. Unutursan liste geri getirilemez.'; $('pmsg').className = '';
   show('pwf'); $('np').focus();
 };
-$('mout').onclick = function () { $('menu').hidden = true; lset(PK, ''); lset(TK, ''); pw = ''; tok = ''; canEdit = false; S = { items: [] }; start(); };
+$('mout').onclick = function () { $('menu').hidden = true; lset(PK, ''); lset(TK, ''); pw = ''; tok = ''; canEdit = false; S = { items: [] }; W = {}; pend = {}; stEtag = ''; start(); };
 $('pcancel').onclick = function () { $('np').value = ''; $('np2').value = ''; app(); };
 $('pwf').onsubmit = function (ev) {
   ev.preventDefault();
   var a = $('np').value, b = $('np2').value, m = $('pmsg');
   if (a.length < 4 || a !== b) { m.textContent = a !== b ? 'Parolalar aynı değil.' : 'Parola en az 4 karakter olsun.'; m.className = 'err'; return; }
-  var old = pw; pw = a; show('load');
-  saveNow().then(function () { lset(PK, pw); $('np').value = ''; $('np2').value = ''; app(); toast('Şifre değiştirildi ✓', true); },
-    function (e) { pw = old; app(); toast(e.message || 'Kaydedilemedi'); });
+  var old = pw; show('load');
+  (SYNCON() ? loadState(true).then(null, function () {}) : Promise.resolve())
+    .then(function () { pw = a; return saveNow(); })
+    .then(function () { return SYNCON() ? stWriteAll().then(null, function () { toast('Durum dosyası yeni parolayla şifrelenemedi.'); }) : null; })
+    .then(function () { lset(PK, pw); $('np').value = ''; $('np2').value = ''; app(); toast('Şifre değiştirildi ✓', true); },
+      function (e) { pw = old; app(); toast(e.message || 'Kaydedilemedi'); });
 };
 setInterval(applyTheme, 60000);
 applyTheme();
@@ -468,12 +548,16 @@ var uid = function () { return Date.now().toString(36) + Math.random().toString(
 var fixYear = function (v) { v = String(v || '').replace(/\D/g, '').slice(0, 4); return (v.length === 4 && +v >= 1880 && +v <= 2100) ? v : ''; };
 var fixUrl = function (u) { u = (u || '').trim(); return (u && !/^https?:\/\//i.test(u)) ? 'https://' + u : u; };
 
-function isW(x) { return (x.id in local) ? local[x.id] : !!x.w; }
+function isW(x) {
+  if (SYNCON()) return (x.id in W) ? !!W[x.id] : !!x.w;
+  return (x.id in local) ? local[x.id] : !!x.w;
+}
 function eps(s) { return s.e || []; }
 function doneS(s) { return eps(s).length ? eps(s).every(isW) : isW(s); }
 function doneX(x) { return x.k === 'Dizi' ? doneS(x) : isW(x); }
 function setW(x, v) {
-  if (canEdit) { x.w = v; save(); }
+  if (SYNCON()) { W[x.id] = v; pend[x.id] = v; saveState(); }
+  else if (canEdit) { x.w = v; save(); }
   else { local[x.id] = v; lset(LK, JSON.stringify(local)); }
 }
 function stats() {
@@ -725,8 +809,54 @@ function render() {
   }
   items.forEach(function (x) { ul.appendChild(x.k === 'Dizi' ? buildSeries(x) : buildFilm(x)); });
 }
-function app() { document.body.classList.toggle('edit', canEdit); $('menu').hidden = true; show('app'); render(); }
+function app() { document.body.classList.toggle('edit', canEdit); $('menu').hidden = true; show('app'); render(); if (!pollT) pollT = setInterval(poll, 30000); }
 
+var SVGSYNC = '<svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>';
+$('msync').innerHTML = SVGSYNC + '<span>Senkronizasyon</span>';
+function closeSync() { $('sdlg').hidden = true; }
+function openSync() {
+  $('srepo').value = (S.sync && S.sync.r) || ''; $('stok').value = '';
+  $('stok').placeholder = SYNCON() ? 'Değiştirmek için yeni anahtarı yaz' : '';
+  var m = $('smsg'); m.className = 'sp';
+  m.textContent = 'TV ve telefondaki izlendi işaretleri ortak olsun. Bunun için ayrı bir gizli depo ve sadece o depoya yetkili ayrı bir anahtar gerekir.';
+  $('soff').hidden = !SYNCON(); $('sdlg').hidden = false; $('srepo').focus();
+}
+$('msync').onclick = function () {
+  $('menu').hidden = true;
+  if (!canEdit) { toast('Senkronizasyonu ayarlamak için çıkış yapıp düzenleme anahtarıyla giriş yap.'); return; }
+  openSync();
+};
+$('sno').onclick = closeSync;
+$('sdlg').onclick = function (ev) { if (ev.target === this) closeSync(); };
+$('sform').onsubmit = function (ev) {
+  ev.preventDefault();
+  var r = $('srepo').value.trim().replace(/^https?:\/\/github\.com\//i, '').replace(/\/+$/, ''), prev = S.sync, m = $('smsg');
+  var t = $('stok').value.trim() || ((prev && prev.r === r) ? prev.t : '');
+  if (!/^[\w.-]+\/[\w.-]+$/.test(r) || !t) { m.textContent = 'Depo (kullanıcı/depo-adı) ve anahtar gerekli.'; m.className = 'sp err'; return; }
+  m.textContent = 'Kontrol ediliyor…'; m.className = 'sp';
+  fetch('https://api.github.com/repos/' + r, { cache: 'no-store', headers: { 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + t } }).then(function (res) {
+    if (!res.ok) throw new Error('Depoya erişilemedi (' + res.status + '). Depo adını ve anahtarı kontrol et.');
+    S.sync = { r: r, t: t }; stEtag = ''; return saveNow();
+  }).then(function () { closeSync(); return loadState(true).then(null, function () {}); })
+    .then(function () { render(); toast('Senkronizasyon açıldı ✓', true); },
+      function (e) { if (prev) S.sync = prev; else delete S.sync; m.textContent = (e && e.message) || 'Kaydedilemedi'; m.className = 'sp err'; });
+};
+$('soff').onclick = function () {
+  var prev = S.sync;
+  S.items.forEach(function (x) { if (x.id in W) x.w = W[x.id]; eps(x).forEach(function (e) { if (e.id in W) e.w = W[e.id]; }); });
+  delete S.sync; W = {}; pend = {}; stEtag = '';
+  saveNow().then(function () { closeSync(); render(); toast('Senkronizasyon kapatıldı', true); },
+    function (e) { S.sync = prev; var m = $('smsg'); m.textContent = (e && e.message) || 'Kaydedilemedi'; m.className = 'sp err'; });
+};
+document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) closeSync(); });
+function overlayOpen() {
+  return !$('dlg').hidden || !$('edlg').hidden || !$('adlg').hidden || !$('sdlg').hidden || !$('imenu').hidden || !$('menu').hidden || !$('kopts').hidden || !!document.querySelector('.gwipe');
+}
+function poll() {
+  if (document.hidden || !SYNCON() || $('app').hidden || overlayOpen()) return;
+  loadState(false).then(function (ch) { if (ch && !overlayOpen()) render(); }, function () {});
+}
+document.addEventListener('visibilitychange', function () { if (!document.hidden) poll(); });
 var imenu = $('imenu'), imCtx = null;
 function closeMenu() { imenu.hidden = true; imCtx = null; }
 function openMenu(btn, entries) {
