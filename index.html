@@ -207,6 +207,34 @@ body.edit .more{display:grid}
 .dlg p.err{color:var(--err)}
 .dlg .sp{margin-bottom:4px}
 .slink{margin-top:14px;background:none;border:0;color:var(--mut);font-size:.72em;text-decoration:underline;cursor:pointer}
+/* platform dışında izlenenler (arşiv) */
+:root{color-scheme:dark}
+:root[data-m="light"]{color-scheme:light}
+.pd{margin:22px 4px 0}
+.pd-h{display:flex;align-items:center;gap:8px;background:none;border:0;padding:6px 2px;color:var(--mut);font-size:.82em;cursor:pointer;text-align:left;transition:color .2s}
+.pd-h:hover{color:var(--tx)}
+.pd-h svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s}
+.pd-h.open svg{transform:rotate(180deg)}
+.pd-body{margin-top:8px;animation:fade .25s}
+.pd-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.pd-bar button{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:0;color:var(--tx);padding:7px 14px;border-radius:999px;font-size:.78em;cursor:pointer;transition:background-color .2s,color .2s}
+.pd-bar button:hover{background:var(--card2)}
+.pd-bar svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.pd-bar .pd-add{color:var(--acc)}
+.pd-list{display:grid;gap:8px}
+.pd-row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:10px 14px}
+.pd-main{flex:1;min-width:0;display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
+.pd-name{word-break:break-word}
+.pd-meta{display:flex;gap:6px;flex-wrap:wrap}
+.pd-date{font-variant-numeric:tabular-nums}
+.imenu button span{flex:1}
+.imenu .ar{margin-left:auto;width:14px;height:14px;color:var(--acc)}
+.imenu button.on{color:var(--acc)}
+.seg{display:flex;gap:6px;background:var(--card2);padding:4px;border-radius:12px;margin-top:12px}
+.seg button{flex:1;border:0;background:transparent;color:var(--mut);padding:8px;border-radius:9px;font-weight:600;cursor:pointer;transition:background-color .2s,color .2s}
+.seg button.on{background:var(--acc);color:var(--on)}
+.efield input[type=date]{min-height:46px}
+@media(max-width:700px){.pd-main{display:block}.pd-meta{margin-top:6px}.pd-row{padding:10px 12px}}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -279,6 +307,7 @@ body.edit .more{display:grid}
     <button type="submit">Ekle</button>
   </form>
   <ul id="list"></ul>
+  <div class="pd" id="pd" hidden></div>
 </div>
 <div class="ovl" id="dlg" hidden>
   <div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dtitle">
@@ -315,6 +344,17 @@ body.edit .more{display:grid}
     <div class="efield"><label for="stok">Anahtar</label><input id="stok" type="password" autocomplete="off"></div>
     <div class="dbtns"><button type="button" id="sno" class="dno">İptal</button><button type="submit" class="eyes">Kaydet</button></div>
     <button type="button" id="soff" class="slink" hidden>Senkronizasyonu kapat</button>
+  </form>
+</div>
+<div class="ovl" id="pdlg" hidden>
+  <form class="dlg" id="pform" role="dialog" aria-modal="true" aria-labelledby="ptitle">
+    <div class="dico eico"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+    <h2 id="ptitle">Platform dışı ekle</h2>
+    <div class="seg" id="pseg"><button type="button" data-k="Film">Film</button><button type="button" data-k="Dizi">Dizi</button><button type="button" data-k="Diğer">Diğer</button></div>
+    <div class="efield"><label for="pname" id="pnl">Film Adı</label><input id="pname" autocomplete="off"></div>
+    <div class="efield" id="pyf"><label for="pyear">Yıl (isteğe bağlı)</label><input id="pyear" inputmode="numeric" maxlength="4" autocomplete="off"></div>
+    <div class="efield"><label for="pdate">İzlenme tarihi (isteğe bağlı)</label><input id="pdate" type="date"></div>
+    <div class="dbtns"><button type="button" id="pno" class="dno">İptal</button><button type="submit" class="eyes">Kaydet</button></div>
   </form>
 </div>
 <div class="imenu" id="imenu" hidden></div>
@@ -563,7 +603,7 @@ function setW(x, v) {
 function stats() {
   var tot = 0, seen = 0, cat = (filter === 'Film' || filter === 'Dizi' || filter === 'Diğer');
   S.items.forEach(function (x) {
-    if (!!x.a !== archMode) return;
+    if (x.p || !!x.a !== archMode) return;
     if (cat && x.k !== filter) return;
     if (x.k === 'Dizi' && eps(x).length) { eps(x).forEach(function (e) { tot++; if (isW(e)) seen++; }); }
     else { tot++; if (isW(x)) seen++; }
@@ -777,6 +817,7 @@ function buildSeries(s) {
 
 function render() {
   document.documentElement.setAttribute('data-c', CL[filter]);
+  renderPD();
   var tabs = $('tabs'); tabs.textContent = '';
   function grp(list) {
     var g = document.createElement('div'); g.className = 'tg';
@@ -794,7 +835,7 @@ function render() {
   grp(G2);
   var ul = $('list'); ul.textContent = '';
   var items = S.items.filter(function (x) {
-    if (!!x.a !== archMode) return false;
+    if (x.p || !!x.a !== archMode) return false;
     if (filter === 'all') return true;
     if (filter === 'todo') return !doneX(x);
     return x.k === filter;
@@ -850,21 +891,138 @@ $('soff').onclick = function () {
 };
 document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) closeSync(); });
 function overlayOpen() {
-  return !$('dlg').hidden || !$('edlg').hidden || !$('adlg').hidden || !$('sdlg').hidden || !$('imenu').hidden || !$('menu').hidden || !$('kopts').hidden || !!document.querySelector('.gwipe');
+  return !$('dlg').hidden || !$('edlg').hidden || !$('adlg').hidden || !$('sdlg').hidden || !$('pdlg').hidden || !$('imenu').hidden || !$('menu').hidden || !$('kopts').hidden || !!document.querySelector('.gwipe');
 }
 function poll() {
   if (document.hidden || !SYNCON() || $('app').hidden || overlayOpen()) return;
   loadState(false).then(function (ch) { if (ch && !overlayOpen()) render(); }, function () {});
 }
 document.addEventListener('visibilitychange', function () { if (!document.hidden) poll(); });
+var pdOpen = false, pdSort = { k: 'c', d: -1 }, pdListEl = null, pdEdit = null, pdKind = 'Film';
+var PDS = [['d', 'İzlenme'], ['c', 'Eklenme'], ['t', 'Ad'], ['y', 'Yıl']];
+var SVGSORT = '<svg viewBox="0 0 24 24"><path d="M4 6h10M4 12h7M4 18h4"/><path d="M18 8v11M15 16l3 3 3-3"/></svg>';
+var SVGUP = '<svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+var SVGDN = '<svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>';
+var SVGPLUS = '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>';
+function fmtDate(d) { var p = String(d).split('-'); return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : d; }
+function cOf(x) { return x.c || parseInt(String(x.id).slice(0, 8), 36) || 0; }
+function pdByDate(a, b) {
+  if (a.d && b.d) return a.d < b.d ? 1 : (a.d > b.d ? -1 : 0);
+  if (a.d) return -1; if (b.d) return 1; return 0;
+}
+function pdCmp(a, b) {
+  var k = pdSort.k, d = pdSort.d, r = 0;
+  if (k === 'y') {
+    if (a.y && !b.y) return -1; if (!a.y && b.y) return 1;
+    if (a.y && b.y && a.y !== b.y) return (+a.y - +b.y) * d;
+    return pdByDate(a, b) || (cOf(b) - cOf(a));
+  }
+  if (k === 'd') {
+    if (a.d && b.d && a.d !== b.d) return (a.d < b.d ? -1 : 1) * d;
+    if (a.d && !b.d) return -1; if (!a.d && b.d) return 1;
+    return cOf(b) - cOf(a);
+  }
+  if (k === 't') { r = a.t.localeCompare(b.t, 'tr') * d; return r || (cOf(b) - cOf(a)); }
+  return (cOf(a) - cOf(b)) * d;
+}
+function pdItems() {
+  var cat = (filter === 'Film' || filter === 'Dizi' || filter === 'Diğer');
+  return S.items.filter(function (x) { return x.p && (!cat || x.k === filter); });
+}
+function pdSortEntries() {
+  return PDS.map(function (o) {
+    var on = pdSort.k === o[0];
+    return { t: o[1], cls: on ? 'on' : '', end: on ? (pdSort.d > 0 ? SVGUP : SVGDN) : '', fn: function () { pdSetSort(o[0]); } };
+  });
+}
+function pdSetSort(k) {
+  if (pdSort.k === k) pdSort.d *= -1; else pdSort = { k: k, d: k === 't' ? 1 : -1 };
+  renderPDList();
+}
+function pdEntries(x) {
+  return [
+    { ic: SVGPEN, t: 'Düzenle', fn: function () { openPD(x); } },
+    { ic: SVGX, t: 'Sil', cls: 'mdel', fn: function () { askDel('"' + x.t + '" listeden kaldırılacak.', function () { S.items = S.items.filter(function (z) { return z.id !== x.id; }); render(); save(); }); } }
+  ];
+}
+function pdRow(x, showKind) {
+  var r = document.createElement('div'); r.className = 'pd-row';
+  var m = document.createElement('div'); m.className = 'pd-main';
+  var nm = document.createElement('div'); nm.className = 'pd-name'; nm.appendChild(document.createTextNode(x.t));
+  if (x.y && x.k !== 'Diğer') { var sp = document.createElement('span'); sp.className = 'yr'; sp.textContent = x.y; nm.appendChild(sp); }
+  m.appendChild(nm);
+  var meta = document.createElement('div'); meta.className = 'pd-meta';
+  if (showKind) meta.appendChild(mkKind(x.k));
+  if (x.d) { var c = mkKind(fmtDate(x.d)); c.className += ' pd-date'; meta.appendChild(c); }
+  if (meta.children.length) m.appendChild(meta);
+  r.appendChild(m);
+  r.appendChild(mkMore(function () { return pdEntries(x); }));
+  return r;
+}
+function renderPDList() {
+  if (!pdListEl) return;
+  pdListEl.textContent = '';
+  var showKind = !(filter === 'Film' || filter === 'Dizi' || filter === 'Diğer');
+  pdItems().sort(pdCmp).forEach(function (x) { pdListEl.appendChild(pdRow(x, showKind)); });
+}
+function renderPD() {
+  var box = $('pd'); box.textContent = ''; pdListEl = null;
+  if (!archMode || filter === 'todo') { box.hidden = true; return; }
+  box.hidden = false;
+  var n = pdItems().length, open = n > 0 && pdOpen;
+  var h = document.createElement('button'); h.type = 'button'; h.className = 'pd-h' + (open ? ' open' : '');
+  h.innerHTML = '<span>Platform Dışında İzlenenler</span><span>(' + n + ')</span>' + (n ? SVGCH : SVGPLUS);
+  h.onclick = function () { if (!n) openPD(null); else { pdOpen = !pdOpen; renderPD(); } };
+  box.appendChild(h);
+  if (!open) return;
+  var body = document.createElement('div'); body.className = 'pd-body';
+  var bar = document.createElement('div'); bar.className = 'pd-bar';
+  var sb = document.createElement('button'); sb.type = 'button'; sb.className = 'pd-sort'; sb.innerHTML = SVGSORT + '<span>Sırala</span>';
+  sb.onclick = function () { if (imCtx === sb && !imenu.hidden) { closeMenu(); return; } openMenu(sb, pdSortEntries(), pdSortEntries); };
+  var ab = document.createElement('button'); ab.type = 'button'; ab.className = 'pd-add'; ab.innerHTML = SVGPLUS + '<span>Ekle</span>';
+  ab.onclick = function () { openPD(null); };
+  bar.appendChild(sb); bar.appendChild(ab); body.appendChild(bar);
+  pdListEl = document.createElement('div'); pdListEl.className = 'pd-list'; body.appendChild(pdListEl);
+  box.appendChild(body); renderPDList();
+}
+function setPK(k) {
+  pdKind = k; $('pnl').textContent = PH[k]; $('pname').placeholder = ''; $('pyf').hidden = (k === 'Diğer');
+  Array.prototype.forEach.call($('pseg').children, function (b) { b.className = b.getAttribute('data-k') === k ? 'on' : ''; });
+}
+function openPD(x) {
+  pdEdit = x || null;
+  var fixed = x ? x.k : ((filter === 'Film' || filter === 'Dizi' || filter === 'Diğer') ? filter : '');
+  $('pseg').hidden = !!fixed; setPK(fixed || 'Film');
+  $('ptitle').textContent = x ? 'Düzenle' : 'Platform dışı ekle';
+  $('pname').value = x ? x.t : ''; $('pyear').value = x ? (x.y || '') : ''; $('pdate').value = x ? (x.d || '') : '';
+  $('pdlg').hidden = false; $('pname').focus();
+}
+function closePD() { $('pdlg').hidden = true; pdEdit = null; }
+Array.prototype.forEach.call($('pseg').children, function (b) { b.onclick = function () { setPK(b.getAttribute('data-k')); }; });
+$('pno').onclick = closePD;
+$('pdlg').onclick = function (ev) { if (ev.target === this) closePD(); };
+document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) closePD(); });
+$('pform').onsubmit = function (ev) {
+  ev.preventDefault();
+  var n = $('pname').value.trim(); if (!n) { $('pname').focus(); return; }
+  var y = pdKind === 'Diğer' ? '' : fixYear($('pyear').value), d = $('pdate').value, re = /\s*\((\d{4})\)\s*$/, mm;
+  if (pdKind !== 'Diğer' && (mm = n.match(re))) { if (!y) y = fixYear(mm[1]); n = n.replace(re, '').trim() || n; }
+  if (pdEdit) {
+    pdEdit.t = n; if (y) pdEdit.y = y; else delete pdEdit.y; if (d) pdEdit.d = d; else delete pdEdit.d;
+  } else {
+    var x = { id: uid(), t: n, k: pdKind, p: true, c: Date.now() };
+    if (y) x.y = y; if (d) x.d = d; S.items.push(x); pdOpen = true;
+  }
+  closePD(); render(); save();
+};
 var imenu = $('imenu'), imCtx = null;
 function closeMenu() { imenu.hidden = true; imCtx = null; }
-function openMenu(btn, entries) {
+function openMenu(btn, entries, refresh) {
   imenu.textContent = '';
   entries.forEach(function (e) {
     var b = document.createElement('button'); b.type = 'button'; if (e.cls) b.className = e.cls;
-    b.innerHTML = e.ic + '<span>' + e.t + '</span>';
-    b.onclick = function () { closeMenu(); e.fn(); };
+    b.innerHTML = (e.ic || '') + '<span>' + e.t + '</span>' + (e.end || '');
+    b.onclick = function (ev) { if (refresh) { ev.stopPropagation(); e.fn(); openMenu(btn, refresh(), refresh); } else { closeMenu(); e.fn(); } };
     imenu.appendChild(b);
   });
   imenu.className = 'imenu'; imenu.hidden = false;
@@ -907,7 +1065,7 @@ $('ayes').onclick = function () { var f = aOk; closeArc(); if (f) f(); };
 $('adlg').onclick = function (ev) { if (ev.target === this) closeArc(); };
 $('abtn').innerHTML = SVGARC;
 $('abtn').onclick = function () { archMode = !archMode; document.body.classList.toggle('arch', archMode); this.classList.toggle('on', archMode); closeMenu(); render(); };
-document.addEventListener('click', function (ev) { if (!imenu.hidden && !imenu.contains(ev.target) && !(ev.target.closest && ev.target.closest('.more'))) closeMenu(); });
+document.addEventListener('click', function (ev) { if (!imenu.hidden && !imenu.contains(ev.target) && !(ev.target.closest && ev.target.closest('.more,.pd-sort'))) closeMenu(); });
 document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) { closeMenu(); closeArc(); } });
 window.addEventListener('scroll', closeMenu, true); window.addEventListener('resize', closeMenu);
 var eOk = null;
