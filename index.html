@@ -168,7 +168,7 @@ body.edit .pen{display:grid}
 .ep.gray{filter:grayscale(1);opacity:.58}
 .g.gray .ep.gray{opacity:1}
 /* yıl etiketi */
-.yr{display:inline-block;position:relative;margin-left:8px;padding:1px 9px;border-radius:999px;background:var(--card2);color:var(--mut);font-size:.7em;font-weight:500;line-height:1.6;letter-spacing:.02em;vertical-align:.08em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.yr{display:inline-block;position:relative;margin-left:0;padding:1px 9px;border-radius:999px;background:var(--card2);color:var(--mut);font-size:.7em;font-weight:500;line-height:1.6;letter-spacing:.02em;vertical-align:.08em;font-variant-numeric:tabular-nums;white-space:nowrap}
 .yr::after{content:"";position:absolute;left:4px;right:4px;top:50%;height:2px;margin-top:-1px;border-radius:2px;background:var(--acc);transform:scaleX(0);transform-origin:left;transition:transform .3s ease 0s}
 .done .tx .yr::after{transform:scaleX(1);transition:transform .3s ease .3s}
 .ov .yr::after{display:none}
@@ -205,7 +205,7 @@ body.edit .more{display:grid}
 :root[data-m="light"] .fav .ep .more{background:rgba(255,255,255,.6)}
 /* satırın tamamı gerçek bir bağlantı (butonlar üstte kalır) */
 .rl{position:absolute;left:0;top:0;right:0;bottom:0;z-index:1;border-radius:inherit}
-.f .chk,.f .more,.f .star,.f .t,.ep .chk,.ep .more,.ep .t{position:relative;z-index:2}
+.f .chk,.f .more,.f .star,.f .rvb,.f .t,.ep .chk,.ep .more,.ep .t{position:relative;z-index:2}
 /* koyu tema: yıldızlı dizinin bölümleri altın tonunda */
 .fav.f,.fav.g{--card2:#312c1a}
 .fav .ep .more{background:rgba(0,0,0,.28)}
@@ -276,6 +276,26 @@ body.edit .rvb{display:grid}
 @keyframes rpop{0%{transform:scale(.55) rotate(-14deg)}60%{transform:scale(1.28) rotate(6deg)}100%{transform:scale(1) rotate(0)}}
 @keyframes burst{from{transform:scale(.3);opacity:.95}to{transform:scale(1.7);opacity:0}}
 @media (prefers-reduced-motion:reduce){.rs.on svg,.rs.on.pop svg{animation:none}.rs.pop::after{display:none}}
+/* arşivdeki kartlar: üstü çizili/soluk değil, kendi renginde */
+.arc .ov{display:none}
+.arc .done .t{color:var(--tx)}
+.arc .tx .yr::after{display:none}
+.arc.gray,.arc .ep.gray{filter:none;opacity:1}
+.g.arc .prog{padding-left:14px}
+.abar{margin:0 0 12px}
+/* değerlendirme: görüntüleme kipi */
+#rform{position:relative}
+#rform .rview{display:none;text-align:left;white-space:pre-wrap;word-break:break-word;background:var(--card2);border-radius:12px;padding:12px;margin-top:12px;max-height:40vh;overflow-y:auto;line-height:1.5;font-size:.95em;animation:fade .25s}
+#rform .rview.empty{color:var(--mut);font-style:italic}
+#rform.view .rview{display:block}
+#rform.view .efield{display:none}
+#rform.view .rstars{pointer-events:none}
+#rform.view #rno,#rform.view .rsave{display:none}
+#rform:not(.view) .rclose,#rform:not(.view) .redit{display:none}
+.dbtns .rclose{background:var(--card2);color:var(--tx);border:1.5px solid transparent}
+.redit{position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:0;color:var(--tx);padding:6px 12px;border-radius:999px;font-size:.78em;cursor:pointer;transition:background-color .2s,color .2s}
+.redit svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.redit:hover{color:var(--acc)}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -302,7 +322,7 @@ body.edit .rvb{display:grid}
 .menu{position:absolute;right:0;top:50px;z-index:10;min-width:220px;background:var(--card2);border-radius:14px;padding:6px;box-shadow:0 8px 28px rgba(0,0,0,.35);animation:fade .15s}
 .menu button{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;padding:12px;border-radius:10px;cursor:pointer;text-align:left;font-size:.8em}
 .menu button:hover{background:var(--card)}
-@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}.tabs{gap:8px 6px;justify-content:center}.brk{display:block;flex:0 0 100%;height:0;order:3}.t-all{order:1}.sb{order:2;flex:1;width:auto;min-width:0;margin:0 8px 0 6px;height:38px;padding:0 12px;border-radius:13px}.t-todo{order:4}.sep{order:5;height:22px;margin:0 3px}.t-f{order:6}.t-d{order:7}.t-o{order:8}.tab{padding:6px 11px;font-size:.94em}.f,.row{align-items:flex-start}.main{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px 8px;align-items:center}.f .main{grid-template-areas:"t s d" "a a r"}.g .main{grid-template-areas:"t s d" "a r c"}.star{grid-area:s}.more{grid-area:d}.rvb{grid-area:r;justify-self:end}.rstars{gap:2px}.rs svg{width:34px;height:34px}.main .t{grid-area:t;flex:none;justify-self:start;max-width:100%}.acts{display:contents}.meta{grid-area:a}.chev{grid-area:c}.del{grid-area:d}.k{font-size:.72em}.prog{padding:0 12px 12px 56px}.bar{height:6px}}
+@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}.tabs{gap:8px 6px;justify-content:center}.brk{display:block;flex:0 0 100%;height:0;order:3}.t-all{order:1}.sb{order:2;flex:1;width:auto;min-width:0;margin:0 8px 0 6px;height:38px;padding:0 12px;border-radius:13px}.t-todo{order:4}.sep{order:5;height:22px;margin:0 3px}.t-f{order:6}.t-d{order:7}.t-o{order:8}.tab{padding:6px 11px;font-size:.94em}.f,.row{align-items:flex-start}.main{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto auto;gap:6px 8px;align-items:center}.f .main{grid-template-areas:"t t t s d" "a r . . ."}.g .main{grid-template-areas:"t t t s d" "a r . . c"}.star{grid-area:s}.more{grid-area:d}.rvb{grid-area:r;justify-self:start}.main .meta{padding-left:2px}.g.arc .prog{padding-left:12px}.rstars{gap:2px}.rs svg{width:34px;height:34px}.main .t{grid-area:t;flex:none;justify-self:start;max-width:100%}.acts{display:contents}.meta{grid-area:a}.chev{grid-area:c}.del{grid-area:d}.k{font-size:.72em}.prog{padding:0 12px 12px 56px}.bar{height:6px}}
 </style>
 </head>
 <body>
@@ -349,6 +369,7 @@ body.edit .rvb{display:grid}
     <div class="sel" id="ksel"><button type="button" id="kbtn" class="selbtn" aria-haspopup="listbox"><span id="kval">Film</span><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="opts" id="kopts" role="listbox" hidden></div></div>
     <button type="submit">Ekle</button>
   </form>
+  <div class="pd-bar abar" id="abar" hidden><button type="button" class="pd-sort" id="asortb"></button></div>
   <ul id="list"></ul>
   <div class="pd" id="asr" hidden></div>
   <div class="pd" id="pd" hidden></div>
@@ -367,6 +388,7 @@ body.edit .rvb{display:grid}
     <h2 id="etitle">Düzenle</h2>
     <div class="efield"><label for="ename">Ad</label><input id="ename" autocomplete="off"></div>
     <div class="efield" id="eyf"><label for="eyear">Yıl (isteğe bağlı)</label><input id="eyear" inputmode="numeric" maxlength="4" autocomplete="off"></div>
+    <div class="efield" id="edf" hidden><label for="edate">İzlenme tarihi (isteğe bağlı)</label><input id="edate" type="date"></div>
     <div class="efield"><label for="eurl">Bağlantı</label><input id="eurl" inputmode="url" autocomplete="off"></div>
     <div class="dbtns"><button type="button" id="eno" class="dno">İptal</button><button type="submit" class="eyes">Kaydet</button></div>
   </form>
@@ -376,6 +398,7 @@ body.edit .rvb{display:grid}
     <div class="dico aico"><svg viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div>
     <h2 id="atitle">Arşive taşınsın mı?</h2>
     <p id="atxt"></p>
+    <div class="efield" id="adf"><label for="adate">İzlenme tarihi (isteğe bağlı)</label><input id="adate" type="date"></div>
     <div class="dbtns"><button type="button" id="ano" class="dno">İptal</button><button type="button" id="ayes" class="ayes">Arşivle</button></div>
   </div>
 </div>
@@ -403,13 +426,15 @@ body.edit .rvb{display:grid}
 </div>
 <div class="ovl" id="rdlg" hidden>
   <form class="dlg" id="rform" role="dialog" aria-modal="true" aria-labelledby="rtitle">
+    <button type="button" id="redit" class="redit"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Düzenle</button>
     <div class="dico eico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
     <h2 id="rtitle">Değerlendirme</h2>
     <p id="rname" class="rn"></p>
     <div class="rstars" id="rstars" role="radiogroup" aria-label="Puan"></div>
     <div class="rcap" id="rcap"></div>
+    <div class="rview" id="rview"></div>
     <div class="efield"><label for="rtxt">Notların</label><textarea id="rtxt" rows="5" maxlength="3000" placeholder="Düşüncelerini yaz..."></textarea></div>
-    <div class="dbtns"><button type="button" id="rno" class="dno">İptal</button><button type="submit" class="eyes">Kaydet</button></div>
+    <div class="dbtns"><button type="button" id="rno" class="dno">İptal</button><button type="submit" class="eyes rsave">Kaydet</button><button type="button" id="rclose" class="rclose">Kapat</button></div>
   </form>
 </div>
 <div class="imenu" id="imenu" hidden></div>
@@ -675,7 +700,7 @@ function fillTitle(el, x) {
   var tx = document.createElement('span'), ov = document.createElement('span');
   tx.className = 'tx'; ov.className = 'ov'; ov.setAttribute('aria-hidden', 'true');
   tx.appendChild(document.createTextNode(x.t)); ov.appendChild(document.createTextNode(x.t));
-  if (y) [tx, ov].forEach(function (p) { var sp = document.createElement('span'); sp.className = 'yr'; sp.textContent = y; p.appendChild(sp); });
+  if (y) [tx, ov].forEach(function (p) { var sp = document.createElement('span'); sp.className = 'yr'; sp.textContent = y; p.appendChild(document.createTextNode('\u2002')); p.appendChild(sp); });
   el.textContent = ''; el.appendChild(tx); el.appendChild(ov);
 }
 function mkLink(x) {
@@ -773,13 +798,13 @@ function mkRowLink(u) {
 }
 function buildFilm(x) {
   var li = document.createElement('li');
-  li.className = 'f k-' + CL[x.k] + (isW(x) ? ' done gray' : '') + favCls(x) + (x.u ? ' lnk' : ''); li.setAttribute('data-id', x.id);
+  li.className = 'f k-' + CL[x.k] + (isW(x) && !x.a ? ' done gray' : '') + favCls(x) + (x.u ? ' lnk' : '') + (x.a ? ' arc' : ''); li.setAttribute('data-id', x.id);
   if (x.u) li.appendChild(mkRowLink(x.u));
-  li.appendChild(mkChk(function () { var v = !isW(x); setW(x, v); li.classList.toggle('done', v); stats(); doneFx(li, v, x.id); }));
+  if (!x.a) li.appendChild(mkChk(function () { var v = !isW(x); setW(x, v); li.classList.toggle('done', v); stats(); doneFx(li, v, x.id); }));
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
   main.appendChild(mkLink(x));
-  var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(mkKind(x.k)); rateChip(meta, x); acts.appendChild(meta); acts.appendChild(mkStar(x));
+  var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(mkKind(x.k)); rateChip(meta, x); dateChip(meta, x); acts.appendChild(meta); acts.appendChild(mkStar(x));
   if (x.a) acts.appendChild(mkReview(x));
   acts.appendChild(mkMore(function () { return itemEntries(x, li); }));
   main.appendChild(acts); li.appendChild(main);
@@ -788,7 +813,7 @@ function buildFilm(x) {
 
 function buildSeries(s) {
   s.e = eps(s);
-  var li = document.createElement('li'); li.className = 'g k-d' + (open[s.id] ? ' open' : '') + favCls(s); li.setAttribute('data-id', s.id);
+  var li = document.createElement('li'); li.className = 'g k-d' + (open[s.id] ? ' open' : '') + favCls(s) + (s.a ? ' arc' : ''); li.setAttribute('data-id', s.id);
   var head = document.createElement('div'); head.className = 'row';
   var cnt = mkKind('');
   var prog = document.createElement('div'); prog.className = 'prog'; prog.hidden = !s.e.length;
@@ -799,20 +824,20 @@ function buildSeries(s) {
   function pctOf() { return s.e.length ? Math.round(s.e.filter(isW).length * 100 / s.e.length) : (isW(s) ? 100 : 0); }
   var epEls = [];
   function sync(first) {
-    var d = doneS(s), n = s.e.filter(isW).length, p = pctOf();
+    var d = doneS(s) && !s.a, n = s.e.filter(isW).length, p = pctOf();
     head.classList.toggle('done', d); li.classList.toggle('sdone', d);
     if (first) li.classList.toggle('gray', d);
     cnt.textContent = s.e.length ? (n + '/' + s.e.length) : 'Dizi';
     epEls.forEach(function (q) {
       var w = isW(q.x), was = q.el.classList.contains('done');
       q.el.classList.toggle('done', w);
-      if (first) q.el.classList.toggle('gray', w); else if (was !== w) epFx(q.el, w);
+      if (!s.a) { if (first) q.el.classList.toggle('gray', w); else if (was !== w) epFx(q.el, w); }
     });
     pct.textContent = '%' + p;
     if (!first) fill.style.width = p + '%';
     stats();
   }
-  function doneChg(was) { var now = doneS(s); if (was !== now) doneFx(li, now, s.id); }
+  function doneChg(was) { if (s.a) return; var now = doneS(s); if (was !== now) doneFx(li, now, s.id); }
   function tog() {
     open[s.id] = !open[s.id]; li.classList.toggle('open', !!open[s.id]);
     lset(OKEY, JSON.stringify(open));
@@ -823,7 +848,7 @@ function buildSeries(s) {
   chev.className = 'chev'; chev.innerHTML = SVGCH; chev.tabIndex = -1; chev.setAttribute('aria-hidden', 'true');
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
-  head.appendChild(mkChk(function () {
+  if (!s.a) head.appendChild(mkChk(function () {
     var was = doneS(s), v = !was;
     if (s.e.length) s.e.forEach(function (e) { setW(e, v); }); else setW(s, v);
     sync(); doneChg(was);
@@ -831,7 +856,7 @@ function buildSeries(s) {
   main.appendChild(title);
   var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(cnt);
   if (s.u) { var a = document.createElement('a'); a.className = 'k'; a.innerHTML = SVGLINK; a.setAttribute('aria-label', 'Bağlantıyı aç'); a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; meta.appendChild(a); }
-  rateChip(meta, s);
+  rateChip(meta, s); dateChip(meta, s);
   acts.appendChild(meta);
   acts.appendChild(mkStar(s));
   acts.appendChild(chev);
@@ -891,9 +916,13 @@ function render() {
   var sp = document.createElement('span'); sp.className = 'sep'; tabs.insertBefore(sp, sbx);
   G2.forEach(tabBtn);
   var br = document.createElement('span'); br.className = 'brk'; tabs.insertBefore(br, sbx);
+  renderList();
+}
+function renderList() {
   var ul = $('list'); ul.textContent = '';
   var items = mainItems();
-  items = ordered(items);
+  items = archMode ? items.sort(pdCmp) : ordered(items);
+  $('abar').hidden = !(archMode && items.length);
   stats();
   if (!items.length) {
     var e = document.createElement('li'); e.className = 'empty';
@@ -971,7 +1000,7 @@ function ordered(items) {
 function resultCount() { return mainItems().length + arcItems().length + pdItems().length; }
 function renderASR() {
   var box = $('asr'); box.textContent = '';
-  var items = ordered(arcItems()), n = items.length;
+  var items = arcItems().sort(pdCmp), n = items.length;
   if (!n) { box.hidden = true; return; }
   box.hidden = false;
   var open = asOpen !== null ? asOpen : mainItems().length === 0;
@@ -1037,7 +1066,7 @@ function pdSortEntries() {
 }
 function pdSetSort(k) {
   if (pdSort.k === k) pdSort.d *= -1; else pdSort = { k: k, d: k === 't' ? 1 : -1 };
-  renderPDList();
+  renderPDList(); renderList();
 }
 function pdEntries(x) {
   return [
@@ -1127,6 +1156,7 @@ function ovHide(el) {
 }
 function focusLater(el, sel) { setTimeout(function () { try { el.focus({ preventScroll: true }); if (sel && el.select) el.select(); } catch (e) {} }, 230); }
 var SVGCMT = '<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+function dateChip(meta, x) { if (x.a && x.d) { var c = mkKind(fmtDate(x.d)); c.className += ' pd-date'; meta.appendChild(c); } }
 function rateChip(meta, x) { if (x.r) { var c = mkKind('★ ' + x.r); c.className += ' rt'; meta.appendChild(c); } }
 function mkReview(x) {
   var b = document.createElement('button');
@@ -1159,14 +1189,22 @@ function paintRV(anim) {
 }
 function setRV(n, anim) { rv = n; paintRV(anim); }
 function rvGrow() { var t = $('rtxt'); t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight + 2, Math.round(window.innerHeight * 0.4)) + 'px'; }
+var rvMode = 'edit';
+function setRVMode(m) {
+  rvMode = m; $('rform').classList.toggle('view', m === 'view');
+  if (m === 'view') { var v = $('rview'); v.textContent = rvItem.n || 'Not eklenmemiş.'; v.classList.toggle('empty', !rvItem.n); }
+  else rvGrow();
+}
 function openRV(x) {
   rvItem = x; rv = x.r || 0; rvR0 = rv;
   $('rname').textContent = x.t + ((x.y && x.k !== 'Diğer') ? ' (' + x.y + ')' : '');
   $('rtxt').value = x.n || ''; rvT0 = $('rtxt').value;
-  paintRV(false); ovShow($('rdlg')); rvGrow();
+  paintRV(false); ovShow($('rdlg')); setRVMode((x.r || x.n) ? 'view' : 'edit');
 }
+$('redit').onclick = function () { setRVMode('edit'); };
+$('rclose').onclick = function () { closeRV(); };
 function closeRV() { ovHide($('rdlg')); rvItem = null; }
-function rvDirty() { return rv !== rvR0 || $('rtxt').value !== rvT0; }
+function rvDirty() { return rvMode === 'edit' && (rv !== rvR0 || $('rtxt').value !== rvT0); }
 $('rtxt').oninput = rvGrow;
 $('rno').onclick = closeRV;
 $('rdlg').onclick = function (ev) { if (ev.target === this && !rvDirty()) closeRV(); };
@@ -1179,6 +1217,8 @@ $('rform').onsubmit = function (ev) {
   if (t) x.n = t; else delete x.n;
   closeRV(); render(); save(); toast('Değerlendirme kaydedildi ✓', true);
 };
+$('asortb').innerHTML = SVGSORT + '<span>Sırala</span>';
+$('asortb').onclick = function () { var b = this; if (imCtx === b && !imenu.hidden) { closeMenu(); return; } openMenu(b, pdSortEntries(), pdSortEntries); };
 var imenu = $('imenu'), imCtx = null;
 function closeMenu() { imenu.hidden = true; imCtx = null; }
 function openMenu(btn, entries, refresh) {
@@ -1209,9 +1249,9 @@ function itemEntries(x, li) {
   var label = x.k === 'Dizi' ? 'Diziyi Düzenle' : (x.k === 'Film' ? 'Filmi Düzenle' : 'İçeriği Düzenle');
   var extra = (x.k === 'Dizi' && eps(x).length) ? ' ve ' + eps(x).length + ' bölümü' : '';
   return [
-    { ic: SVGPEN, t: 'Düzenle', fn: function () { askEdit(label, x, x.k !== 'Diğer', function (n, u, y) { x.t = n; x.u = u; if (y) x.y = y; else delete x.y; render(); save(); }); } },
+    { ic: SVGPEN, t: 'Düzenle', fn: function () { askEdit(label, x, x.k !== 'Diğer', function (n, u, y, dd) { x.t = n; x.u = u; if (y) x.y = y; else delete x.y; if (x.a) { if (dd) x.d = dd; else delete x.d; } render(); save(); }); } },
     x.a ? { ic: SVGARC, t: 'Arşivden çıkar', cls: 'marc', fn: function () { x.a = false; save(); goneFx(li, x.id); toast('Arşivden çıkarıldı', true); } }
-        : { ic: SVGARC, t: 'Arşivle', cls: 'marc', fn: function () { askArc('"' + x.t + '"' + extra + ' arşive taşınacak. İstediğin zaman geri alabilirsin.', function () { x.a = true; save(); goneFx(li, x.id); toast('Arşive taşındı', true); }); } },
+        : { ic: SVGARC, t: 'Arşivle', cls: 'marc', fn: function () { askArc('"' + x.t + '"' + extra + ' arşive taşınacak. İstediğin zaman geri alabilirsin.', function (d) { x.a = true; if (d) x.d = d; save(); goneFx(li, x.id); toast('Arşive taşındı', true); }, x.d); } },
     { ic: SVGX, t: 'Sil', cls: 'mdel', fn: function () { askDel('"' + x.t + '"' + extra + ' listeden kaldırılacak.', function () { S.items = S.items.filter(function (z) { return z.id !== x.id; }); render(); save(); }); } }
   ];
 }
@@ -1222,10 +1262,10 @@ function epEntries(s, e) {
   ];
 }
 var aOk = null;
-function askArc(txt, ok) { $('atxt').textContent = txt; aOk = ok; ovShow($('adlg')); focusLater($('ano')); }
+function askArc(txt, ok, d) { $('atxt').textContent = txt; $('adate').value = d || ''; aOk = ok; ovShow($('adlg')); focusLater($('ano')); }
 function closeArc() { ovHide($('adlg')); aOk = null; }
 $('ano').onclick = closeArc;
-$('ayes').onclick = function () { var f = aOk; closeArc(); if (f) f(); };
+$('ayes').onclick = function () { var f = aOk, d = $('adate').value; closeArc(); if (f) f(d); };
 $('adlg').onclick = function (ev) { if (ev.target === this) closeArc(); };
 $('abtn').innerHTML = SVGARC;
 $('abtn').onclick = function () { archMode = !archMode; document.body.classList.toggle('arch', archMode); this.classList.toggle('on', archMode); closeMenu(); render(); };
@@ -1236,7 +1276,7 @@ var eOk = null;
 function askEdit(title, x, withYear, ok) {
   var n = x.t, y = x.y || '', re = /\s*\((\d{4})\)\s*$/, m;
   if (withYear && !y && (m = n.match(re))) { y = m[1]; n = n.replace(re, ''); }
-  $('etitle').textContent = title; $('ename').value = n; $('eurl').value = x.u || ''; $('eyear').value = y; $('eyf').hidden = !withYear;
+  $('etitle').textContent = title; $('ename').value = n; $('eurl').value = x.u || ''; $('eyear').value = y; $('eyf').hidden = !withYear; $('edf').hidden = !x.a; $('edate').value = x.d || '';
   eOk = ok; ovShow($('edlg')); focusLater($('ename'), true);
 }
 function closeEdit() { ovHide($('edlg')); eOk = null; }
@@ -1245,7 +1285,7 @@ $('edlg').onclick = function (ev) { if (ev.target === this) closeEdit(); };
 $('eform').onsubmit = function (ev) {
   ev.preventDefault();
   var n = $('ename').value.trim(); if (!n) { $('ename').focus(); return; }
-  var f = eOk, u = fixUrl($('eurl').value), y = fixYear($('eyear').value); closeEdit(); if (f) f(n, u, y);
+  var f = eOk, u = fixUrl($('eurl').value), y = fixYear($('eyear').value), dd = $('edate').value; closeEdit(); if (f) f(n, u, y, dd);
 };
 document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) closeEdit(); });
 var dOk = null;
