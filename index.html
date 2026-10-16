@@ -320,12 +320,12 @@ body.arch .addwrap{display:none!important}
 .addh .ai{flex:none;width:28px;height:28px;border-radius:50%;background:var(--acc);color:var(--on);display:grid;place-items:center;transition:background-color .5s,transform .3s}
 .addh .ai svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round}
 .addh .ac{margin-left:auto;width:18px;height:18px;fill:none;stroke:var(--mut);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s}
-.addwrap.open .ac{transform:rotate(180deg)}
-.addwrap.open .ai{transform:rotate(45deg)}
-.addbody{height:0;overflow:hidden;transition:height .38s cubic-bezier(.22,.9,.3,1)}
-.addwrap.done .addbody{overflow:visible}
-.addin{opacity:0;transform:translateY(-8px);visibility:hidden;transition:opacity .22s ease,transform .32s cubic-bezier(.22,.9,.3,1),visibility 0s .32s}
-.addwrap.open .addin{opacity:1;transform:none;visibility:visible;transition:opacity .3s ease .06s,transform .38s cubic-bezier(.22,.9,.3,1),visibility 0s}
+.addwrap.shown .ac{transform:rotate(180deg)}
+.addwrap.shown .ai{transform:rotate(45deg)}
+.addbody{display:none}
+.addwrap.open .addbody{display:block}
+.addin{opacity:0;transform:translateY(-10px);transition:opacity .22s ease,transform .38s cubic-bezier(.22,.9,.3,1)}
+.addwrap.shown .addin{opacity:1;transform:none;transition:opacity .32s ease .06s,transform .38s cubic-bezier(.22,.9,.3,1)}
 .addwrap .add{background:transparent;margin:0;padding:0 12px 12px}
 .rwrap{position:relative;width:fit-content;max-width:100%;margin:16px auto 4px;padding:6px 10px}
 .rframe{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;opacity:0;transition:opacity .25s}
@@ -344,7 +344,7 @@ body.arch .addwrap{display:none!important}
 .k.rt.r5::after{content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-20deg);animation:sheen 3.4s ease-in-out infinite;pointer-events:none}
 @keyframes sheen{0%,55%{left:-60%}100%{left:130%}}
 .k.rt.r1{color:#e08582;border-color:rgba(224,133,130,.55);background-color:rgba(200,70,70,.12)}
-.k.rt.r1 svg{fill:currentColor;stroke:currentColor;opacity:.85;transform:rotate(180deg)}
+.k.rt.r1 svg{fill:currentColor;stroke:currentColor}
 :root[data-m="light"] .k.rt.r1{color:#b4443f;border-color:rgba(180,68,63,.5);background-color:rgba(180,68,63,.08)}
 @media (prefers-reduced-motion:reduce){.k.rt.r5::after{animation:none;display:none}}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
@@ -425,10 +425,12 @@ body.arch .addwrap{display:none!important}
   </form>
     </div></div>
   </div>
+  <div id="below">
   <div class="pd-bar abar" id="abar" hidden><button type="button" class="pd-sort pd-filt" id="afiltb"></button><button type="button" class="pd-sort" id="asortb"></button></div>
   <ul id="list"></ul>
   <div class="pd" id="asr" hidden></div>
   <div class="pd" id="pd" hidden></div>
+  </div>
 </div>
 <div class="ovl" id="dlg" hidden>
   <div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dtitle">
@@ -1257,15 +1259,16 @@ var rvItem = null, rv = 0, rvT0 = '', rvR0 = 0;
   box.onmouseleave = function () { hoverRV(0); };
 })();
 function hoverRV(n) { Array.prototype.forEach.call($('rstars').children, function (b, i) { b.classList.toggle('hv', i < n && !b.classList.contains('on')); }); }
-function paintRV(anim) {
+function paintRV(anim, old) {
+  old = old || 0;
   Array.prototype.forEach.call($('rstars').children, function (b, i) {
     var on = i < rv; b.classList.toggle('on', on); b.classList.remove('pop'); b.classList.remove('hv');
     b.setAttribute('aria-checked', on && i === rv - 1 ? 'true' : 'false');
-    if (on && anim) { b.style.setProperty('--d', (i * 55) + 'ms'); void b.offsetWidth; b.classList.add('pop'); }
+    if (on && anim && i >= old) { b.style.setProperty('--d', ((i - old) * 55) + 'ms'); void b.offsetWidth; b.classList.add('pop'); }
   });
   $('rcap').textContent = rv ? rv + ' / 5' : 'Henüz puan verilmedi';
   var rw = $('rwrap'); rw.classList.toggle('five', rv === 5); rw.classList.remove('draw');
-  if (rv === 5) { buildFrame(); if (anim) { void rw.offsetWidth; rw.classList.add('draw'); } }
+  if (rv === 5) { buildFrame(); if (anim && old < 5) { void rw.offsetWidth; rw.classList.add('draw'); } }
 }
 function buildFrame() {
   var w = $('rwrap'), W = w.offsetWidth, H = w.offsetHeight, m = 1.5, r = Math.max(4, Math.min(16, H / 2 - 4));
@@ -1279,7 +1282,7 @@ function buildFrame() {
   var svg = $('rframe'); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('width', W); svg.setAttribute('height', H);
   Array.prototype.forEach.call(svg.children, function (p, i) { p.setAttribute('d', d[i]); });
 }
-function setRV(n, anim) { rv = n; paintRV(anim); }
+function setRV(n, anim) { var old = rv; rv = n; paintRV(anim, old); }
 function rvGrow() { var t = $('rtxt'); t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight + 2, Math.round(window.innerHeight * 0.4)) + 'px'; }
 var rvMode = 'edit';
 function setRVMode(m) {
@@ -1320,20 +1323,26 @@ function filterEntries() {
   });
 }
 function toggleAdd() {
-  var w = $('addwrap'), b = $('addbody'), isOpen = w.classList.contains('open');
-  clearTimeout(w._t);
-  if (!isOpen) {
-    w.classList.remove('done'); b.style.height = b.offsetHeight + 'px';
-    w.classList.add('open'); $('addh').setAttribute('aria-expanded', 'true');
-    var h = $('addin').scrollHeight;
-    requestAnimationFrame(function () { b.style.height = h + 'px'; });
-    w._t = setTimeout(function () { b.style.height = 'auto'; w.classList.add('done'); }, 400);
+  var w = $('addwrap'), b = $('addbody'), below = $('below');
+  if (w._fin) w._fin();
+  var want = !w.classList.contains('shown'), D = 380, E = 'cubic-bezier(.22,.9,.3,1)';
+  $('addh').setAttribute('aria-expanded', want ? 'true' : 'false');
+  if (!want) { $('kopts').hidden = true; $('ksel').classList.remove('open'); }
+  if (!w.animate || !below.animate) { w.classList.toggle('open', want); w.classList.toggle('shown', want); return; }
+  var a1, a2, H;
+  if (want) {
+    w.classList.add('open'); void b.offsetHeight; H = b.offsetHeight;
+    w.classList.add('shown');
+    a1 = w.animate([{ clipPath: 'inset(0 0 ' + H + 'px 0 round 16px)' }, { clipPath: 'inset(0 0 0px 0 round 16px)' }], { duration: D, easing: E, fill: 'backwards' });
+    a2 = below.animate([{ transform: 'translateY(' + (-H) + 'px)' }, { transform: 'translateY(0)' }], { duration: D, easing: E, fill: 'backwards' });
+    w._fin = function () { w._fin = null; a1.cancel(); a2.cancel(); };
   } else {
-    var cur = b.offsetHeight; w.classList.remove('done'); b.style.height = cur + 'px';
-    $('kopts').hidden = true; $('ksel').classList.remove('open');
-    void b.offsetHeight; w.classList.remove('open'); $('addh').setAttribute('aria-expanded', 'false');
-    requestAnimationFrame(function () { b.style.height = '0px'; });
+    H = b.offsetHeight; w.classList.remove('shown');
+    a1 = w.animate([{ clipPath: 'inset(0 0 0px 0 round 16px)' }, { clipPath: 'inset(0 0 ' + H + 'px 0 round 16px)' }], { duration: D, easing: E, fill: 'forwards' });
+    a2 = below.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(' + (-H) + 'px)' }], { duration: D, easing: E, fill: 'forwards' });
+    w._fin = function () { w._fin = null; w.classList.remove('open'); a1.cancel(); a2.cancel(); };
   }
+  a2.onfinish = function () { if (w._fin) w._fin(); };
 }
 $('addh').onclick = toggleAdd;
 $('afiltb').innerHTML = SVGFILT + '<span>Filtrele</span>';
