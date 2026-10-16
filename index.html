@@ -115,7 +115,7 @@ body.edit .del{display:grid}
 :root[data-m="light"][data-c="a"] .k-o,:root[data-m="light"][data-c="t"] .k-o{--acc:#cf9400;--on:#fff;--bar:#cf9400;--tint:rgba(224,164,0,.13)}
 :root{--star:#f6c344}
 :root[data-m="light"]{--star:#e29f00}
-.star{display:none;order:-1;flex:none;width:30px;height:30px;border-radius:50%;background:var(--card2);border:0;color:var(--mut);cursor:pointer;padding:0;place-items:center;justify-self:end;transition:opacity .28s,transform .28s,color .2s,background-color .2s}
+.star{display:none;order:-2;flex:none;width:30px;height:30px;border-radius:50%;background:var(--card2);border:0;color:var(--mut);cursor:pointer;padding:0;place-items:center;justify-self:end;transition:opacity .28s,transform .28s,color .2s,background-color .2s}
 .star svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:fill .2s}
 .star:hover,.star.on{color:var(--star)}
 .star.on svg{fill:currentColor}
@@ -253,7 +253,7 @@ body.edit .more{display:grid}
 /* değerlendirme (arşiv) */
 :root{--halo:rgba(246,195,68,.85)}
 :root[data-m="light"]{--halo:rgba(226,159,0,.75)}
-.rvb{display:none;flex:none;width:30px;height:30px;border-radius:50%;background:var(--card2);border:0;color:var(--mut);cursor:pointer;padding:0;place-items:center;transition:color .2s,background-color .2s}
+.rvb{display:none;order:-1;flex:none;width:30px;height:30px;border-radius:50%;background:var(--card2);border:0;color:var(--mut);cursor:pointer;padding:0;place-items:center;transition:color .2s,background-color .2s}
 .rvb svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .rvb:hover{color:var(--acc)}
 .rvb.has{color:var(--star);background:var(--gtint)}
@@ -296,6 +296,11 @@ body.edit .rvb{display:grid}
 .redit{position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:0;color:var(--tx);padding:6px 12px;border-radius:999px;font-size:.78em;cursor:pointer;transition:background-color .2s,color .2s}
 .redit svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .redit:hover{color:var(--acc)}
+.meta .pd-date{margin-left:auto}
+/* pencere açıkken sayfa kaymasın */
+html.lock,html.lock body{overflow:hidden}
+html.lock body{padding-right:var(--sbw,0px)}
+.ovl{overscroll-behavior:contain}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -322,7 +327,7 @@ body.edit .rvb{display:grid}
 .menu{position:absolute;right:0;top:50px;z-index:10;min-width:220px;background:var(--card2);border-radius:14px;padding:6px;box-shadow:0 8px 28px rgba(0,0,0,.35);animation:fade .15s}
 .menu button{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;padding:12px;border-radius:10px;cursor:pointer;text-align:left;font-size:.8em}
 .menu button:hover{background:var(--card)}
-@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}.tabs{gap:8px 6px;justify-content:center}.brk{display:block;flex:0 0 100%;height:0;order:3}.t-all{order:1}.sb{order:2;flex:1;width:auto;min-width:0;margin:0 8px 0 6px;height:38px;padding:0 12px;border-radius:13px}.t-todo{order:4}.sep{order:5;height:22px;margin:0 3px}.t-f{order:6}.t-d{order:7}.t-o{order:8}.tab{padding:6px 11px;font-size:.94em}.f,.row{align-items:flex-start}.main{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto auto;gap:6px 8px;align-items:center}.f .main{grid-template-areas:"t t t s d" "a r . . ."}.g .main{grid-template-areas:"t t t s d" "a r . . c"}.star{grid-area:s}.more{grid-area:d}.rvb{grid-area:r;justify-self:start}.main .meta{padding-left:2px}.g.arc .prog{padding-left:12px}.rstars{gap:2px}.rs svg{width:34px;height:34px}.main .t{grid-area:t;flex:none;justify-self:start;max-width:100%}.acts{display:contents}.meta{grid-area:a}.chev{grid-area:c}.del{grid-area:d}.k{font-size:.72em}.prog{padding:0 12px 12px 56px}.bar{height:6px}}
+@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}.tabs{gap:8px 6px;justify-content:center}.brk{display:block;flex:0 0 100%;height:0;order:3}.t-all{order:1}.sb{order:2;flex:1;width:auto;min-width:0;margin:0 8px 0 6px;height:38px;padding:0 12px;border-radius:13px}.t-todo{order:4}.sep{order:5;height:22px;margin:0 3px}.t-f{order:6}.t-d{order:7}.t-o{order:8}.tab{padding:6px 11px;font-size:.94em}.f,.row{align-items:flex-start}.main{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px 8px;align-items:center}.f .main{grid-template-areas:"t s d" "a a a"}.g .main{grid-template-areas:"t s d" "a a c"}.f.arc .main{grid-template-columns:minmax(0,1fr) auto auto auto;grid-template-areas:"t s r d" "a a a a"}.g.arc .main{grid-template-columns:minmax(0,1fr) auto auto auto;grid-template-areas:"t s r d" "a a a c"}.star{grid-area:s}.more{grid-area:d}.rvb{grid-area:r}.main .meta{padding-left:2px}.g.arc .prog{padding-left:12px}.rstars{gap:2px}.rs svg{width:34px;height:34px}.main .t{grid-area:t;flex:none;justify-self:start;max-width:100%}.acts{display:contents}.meta{grid-area:a}.chev{grid-area:c}.del{grid-area:d}.k{font-size:.72em}.prog{padding:0 12px 12px 56px}.bar{height:6px}}
 </style>
 </head>
 <body>
@@ -755,7 +760,7 @@ function doneFx(li, v, id) {
   } else { killWipe(li); reorder(id); }
 }
 var fxId = null;
-function favCls(x) { return x.f ? ' fav' + (x.id === fxId ? ' fav-in' : '') : ''; }
+function favCls(x) { return (x.f && !x.a) ? ' fav' + (x.id === fxId ? ' fav-in' : '') : ''; }
 function reorder(id) {
   var ul = $('list'), old = {}, moved = [];
   Array.prototype.forEach.call(ul.children, function (li) {
@@ -776,8 +781,8 @@ function mkStar(x) {
   var b = document.createElement('button');
   b.className = 'star' + (x.f ? ' on' : ''); b.innerHTML = SVGSTAR; b.setAttribute('aria-label', 'Yıldızla');
   b.onclick = function () {
-    var li = b.closest('li'); x.f = !x.f; b.classList.toggle('on', !!x.f); b.classList.add('pop');
-    if (!x.f && li) li.classList.add('fav-out');
+    var li = b.closest('li'); x.f = !x.f; if (x.f) x.fa = Date.now(); else delete x.fa; b.classList.toggle('on', !!x.f); b.classList.add('pop');
+    if (!x.f && !x.a && li) li.classList.add('fav-out');
     save();
     setTimeout(function () { fxId = x.f ? x.id : null; reorder(x.id); fxId = null; }, x.f ? 300 : 520);
   };
@@ -864,7 +869,7 @@ function buildSeries(s) {
   acts.appendChild(mkMore(function () { return itemEntries(s, li); }));
   main.appendChild(acts); head.appendChild(main);
   li.appendChild(head); li.appendChild(prog);
-  li.onclick = function (ev) { if (ev.target.closest('.eps,.chk,.more,.star,a')) return; tog(); };
+  li.onclick = function (ev) { if (ev.target.closest('.eps,.chk,.more,.star,.rvb,a')) return; tog(); };
 
   var box = document.createElement('div'); box.className = 'eps';
   if (s.e.length) {
@@ -1040,6 +1045,11 @@ function pdByDate(a, b) {
 }
 function pdCmp(a, b) {
   var k = pdSort.k, d = pdSort.d, r = 0;
+  if (k === 's') {
+    if (a.f && !b.f) return -1; if (!a.f && b.f) return 1;
+    if (a.f && b.f && (a.fa || 0) !== (b.fa || 0)) return ((a.fa || 0) - (b.fa || 0)) * d;
+    return cOf(b) - cOf(a);
+  }
   if (k === 'y') {
     if (a.y && !b.y) return -1; if (!a.y && b.y) return 1;
     if (a.y && b.y && a.y !== b.y) return (+a.y - +b.y) * d;
@@ -1058,8 +1068,8 @@ function pdItems() {
   var cat = (filter === 'Film' || filter === 'Dizi' || filter === 'Diğer');
   return S.items.filter(function (x) { return x.p && (!cat || x.k === filter) && hit(x); });
 }
-function pdSortEntries() {
-  return PDS.map(function (o) {
+function pdSortEntries(star) {
+  return PDS.concat(star ? [['s', 'Yıldızlı']] : []).map(function (o) {
     var on = pdSort.k === o[0];
     return { t: o[1], cls: on ? 'on' : '', end: on ? (pdSort.d > 0 ? SVGUP : SVGDN) : '', fn: function () { pdSetSort(o[0]); } };
   });
@@ -1148,11 +1158,16 @@ $('pform').onsubmit = function (ev) {
   }
   closePD(); render(); save();
 };
-function ovShow(el) { clearTimeout(el._ht); el.classList.remove('out'); el.hidden = false; }
+function lockScroll(on) {
+  var h = document.documentElement;
+  if (on) { if (!h.classList.contains('lock')) { h.style.setProperty('--sbw', Math.max(0, window.innerWidth - h.clientWidth) + 'px'); h.classList.add('lock'); } }
+  else h.classList.remove('lock');
+}
+function ovShow(el) { clearTimeout(el._ht); el.classList.remove('out'); el.hidden = false; lockScroll(true); }
 function ovHide(el) {
   if (el.hidden) return;
   clearTimeout(el._ht); el.classList.add('out');
-  el._ht = setTimeout(function () { el.hidden = true; el.classList.remove('out'); }, 190);
+  el._ht = setTimeout(function () { el.hidden = true; el.classList.remove('out'); if (!document.querySelector('.ovl:not([hidden])')) lockScroll(false); }, 190);
 }
 function focusLater(el, sel) { setTimeout(function () { try { el.focus({ preventScroll: true }); if (sel && el.select) el.select(); } catch (e) {} }, 230); }
 var SVGCMT = '<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
@@ -1218,7 +1233,7 @@ $('rform').onsubmit = function (ev) {
   closeRV(); render(); save(); toast('Değerlendirme kaydedildi ✓', true);
 };
 $('asortb').innerHTML = SVGSORT + '<span>Sırala</span>';
-$('asortb').onclick = function () { var b = this; if (imCtx === b && !imenu.hidden) { closeMenu(); return; } openMenu(b, pdSortEntries(), pdSortEntries); };
+$('asortb').onclick = function () { var b = this; if (imCtx === b && !imenu.hidden) { closeMenu(); return; } openMenu(b, pdSortEntries(true), function () { return pdSortEntries(true); }); };
 var imenu = $('imenu'), imCtx = null;
 function closeMenu() { imenu.hidden = true; imCtx = null; }
 function openMenu(btn, entries, refresh) {
