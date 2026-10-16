@@ -250,6 +250,32 @@ body.edit .more{display:grid}
 .sb .qx svg{width:12px;height:12px;stroke-width:2.8}
 /* açık tema: Diğer (sarı) üzerinde beyaz yazı */
 :root[data-m="light"][data-c="o"]{--acc:#cf9400;--on:#fff}
+/* değerlendirme (arşiv) */
+:root{--halo:rgba(246,195,68,.85)}
+:root[data-m="light"]{--halo:rgba(226,159,0,.75)}
+.rvb{display:none;flex:none;width:30px;height:30px;border-radius:50%;background:var(--card2);border:0;color:var(--mut);cursor:pointer;padding:0;place-items:center;transition:color .2s,background-color .2s}
+.rvb svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.rvb:hover{color:var(--acc)}
+.rvb.has{color:var(--star);background:var(--gtint)}
+body.edit .rvb{display:grid}
+.pd-row .rvb{justify-self:auto}
+.k.rt{color:var(--star);border-color:var(--star)}
+#rform{max-height:calc(100vh - 40px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.dlg .rn{margin:2px 0 0}
+.rstars{display:flex;justify-content:center;gap:4px;margin:16px 0 4px}
+.rs{position:relative;background:none;border:0;padding:4px;cursor:pointer;line-height:0;border-radius:50%;-webkit-tap-highlight-color:transparent}
+.rs svg{width:38px;height:38px;fill:none;stroke:var(--mut);stroke-width:1.8;stroke-linejoin:round;overflow:visible;transition:stroke .2s,fill .2s,transform .2s}
+.rs.hv svg{stroke:var(--star);fill:rgba(246,195,68,.22)}
+.rs.on svg{fill:var(--star);stroke:var(--star);animation:halo 2.2s ease-in-out infinite alternate}
+.rs.on.pop svg{animation:rpop .5s cubic-bezier(.3,1.6,.5,1) var(--d,0s) both,halo 2.2s ease-in-out calc(.5s + var(--d,0s)) infinite alternate}
+.rs.pop::after{content:"";position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:radial-gradient(circle,var(--halo),rgba(246,195,68,0) 66%);pointer-events:none;animation:burst .65s ease-out var(--d,0s) both}
+.rcap{text-align:center;color:var(--mut);font-size:.72em;min-height:1.4em;margin-bottom:2px}
+.efield textarea{width:100%;display:block;background:var(--card2);color:var(--tx);border:2px solid transparent;border-radius:12px;padding:12px;font:inherit;resize:none;min-height:116px;max-height:40vh;transition:border-color .2s}
+.efield textarea:focus{outline:none;border-color:var(--acc)}
+@keyframes halo{from{filter:drop-shadow(0 0 2px var(--halo))}to{filter:drop-shadow(0 0 9px var(--halo))}}
+@keyframes rpop{0%{transform:scale(.55) rotate(-14deg)}60%{transform:scale(1.28) rotate(6deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes burst{from{transform:scale(.3);opacity:.95}to{transform:scale(1.7);opacity:0}}
+@media (prefers-reduced-motion:reduce){.rs.on svg,.rs.on.pop svg{animation:none}.rs.pop::after{display:none}}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -276,7 +302,7 @@ body.edit .more{display:grid}
 .menu{position:absolute;right:0;top:50px;z-index:10;min-width:220px;background:var(--card2);border-radius:14px;padding:6px;box-shadow:0 8px 28px rgba(0,0,0,.35);animation:fade .15s}
 .menu button{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;padding:12px;border-radius:10px;cursor:pointer;text-align:left;font-size:.8em}
 .menu button:hover{background:var(--card)}
-@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}.tabs{gap:8px 6px;justify-content:center}.brk{display:block;flex:0 0 100%;height:0;order:3}.t-all{order:1}.sb{order:2;flex:1;width:auto;min-width:0;margin:0 8px 0 6px;height:38px;padding:0 12px;border-radius:13px}.t-todo{order:4}.sep{order:5;height:22px;margin:0 3px}.t-f{order:6}.t-d{order:7}.t-o{order:8}.tab{padding:6px 11px;font-size:.94em}.f,.row{align-items:flex-start}.main{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px 8px;align-items:center}.f .main{grid-template-areas:"t s d" "a a a"}.g .main{grid-template-areas:"t s d" "a a c"}.star{grid-area:s}.more{grid-area:d}.main .t{grid-area:t;flex:none;justify-self:start;max-width:100%}.acts{display:contents}.meta{grid-area:a}.chev{grid-area:c}.del{grid-area:d}.k{font-size:.72em}.prog{padding:0 12px 12px 56px}.bar{height:6px}}
+@media(max-width:700px){body{font-size:17px}.wrap{padding:18px 12px 50px}h1{font-size:1.7em}.f,.row,.ep{gap:10px;padding:10px 12px}.chk{width:34px;height:34px}.chk svg{width:20px;height:20px}.ep .chk{width:30px;height:30px}.ep .chk svg{width:18px;height:18px}.tab{padding:6px 14px}.eps{padding:0 8px 10px 14px}.tabs{gap:8px 6px;justify-content:center}.brk{display:block;flex:0 0 100%;height:0;order:3}.t-all{order:1}.sb{order:2;flex:1;width:auto;min-width:0;margin:0 8px 0 6px;height:38px;padding:0 12px;border-radius:13px}.t-todo{order:4}.sep{order:5;height:22px;margin:0 3px}.t-f{order:6}.t-d{order:7}.t-o{order:8}.tab{padding:6px 11px;font-size:.94em}.f,.row{align-items:flex-start}.main{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px 8px;align-items:center}.f .main{grid-template-areas:"t s d" "a a r"}.g .main{grid-template-areas:"t s d" "a r c"}.star{grid-area:s}.more{grid-area:d}.rvb{grid-area:r;justify-self:end}.rstars{gap:2px}.rs svg{width:34px;height:34px}.main .t{grid-area:t;flex:none;justify-self:start;max-width:100%}.acts{display:contents}.meta{grid-area:a}.chev{grid-area:c}.del{grid-area:d}.k{font-size:.72em}.prog{padding:0 12px 12px 56px}.bar{height:6px}}
 </style>
 </head>
 <body>
@@ -373,6 +399,17 @@ body.edit .more{display:grid}
     <div class="efield" id="pyf"><label for="pyear">Yıl (isteğe bağlı)</label><input id="pyear" inputmode="numeric" maxlength="4" autocomplete="off"></div>
     <div class="efield"><label for="pdate">İzlenme tarihi (isteğe bağlı)</label><input id="pdate" type="date"></div>
     <div class="dbtns"><button type="button" id="pno" class="dno">İptal</button><button type="submit" class="eyes">Kaydet</button></div>
+  </form>
+</div>
+<div class="ovl" id="rdlg" hidden>
+  <form class="dlg" id="rform" role="dialog" aria-modal="true" aria-labelledby="rtitle">
+    <div class="dico eico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    <h2 id="rtitle">Değerlendirme</h2>
+    <p id="rname" class="rn"></p>
+    <div class="rstars" id="rstars" role="radiogroup" aria-label="Puan"></div>
+    <div class="rcap" id="rcap"></div>
+    <div class="efield"><label for="rtxt">Notların</label><textarea id="rtxt" rows="5" maxlength="3000" placeholder="Düşüncelerini yaz..."></textarea></div>
+    <div class="dbtns"><button type="button" id="rno" class="dno">İptal</button><button type="submit" class="eyes">Kaydet</button></div>
   </form>
 </div>
 <div class="imenu" id="imenu" hidden></div>
@@ -742,7 +779,8 @@ function buildFilm(x) {
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
   main.appendChild(mkLink(x));
-  var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(mkKind(x.k)); acts.appendChild(meta); acts.appendChild(mkStar(x));
+  var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(mkKind(x.k)); rateChip(meta, x); acts.appendChild(meta); acts.appendChild(mkStar(x));
+  if (x.a) acts.appendChild(mkReview(x));
   acts.appendChild(mkMore(function () { return itemEntries(x, li); }));
   main.appendChild(acts); li.appendChild(main);
   return li;
@@ -793,9 +831,11 @@ function buildSeries(s) {
   main.appendChild(title);
   var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(cnt);
   if (s.u) { var a = document.createElement('a'); a.className = 'k'; a.innerHTML = SVGLINK; a.setAttribute('aria-label', 'Bağlantıyı aç'); a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; meta.appendChild(a); }
+  rateChip(meta, s);
   acts.appendChild(meta);
   acts.appendChild(mkStar(s));
   acts.appendChild(chev);
+  if (s.a) acts.appendChild(mkReview(s));
   acts.appendChild(mkMore(function () { return itemEntries(s, li); }));
   main.appendChild(acts); head.appendChild(main);
   li.appendChild(head); li.appendChild(prog);
@@ -903,7 +943,7 @@ $('soff').onclick = function () {
 };
 document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) closeSync(); });
 function overlayOpen() {
-  return !$('dlg').hidden || !$('edlg').hidden || !$('adlg').hidden || !$('sdlg').hidden || !$('pdlg').hidden || !$('imenu').hidden || !$('menu').hidden || !$('kopts').hidden || !!document.querySelector('.gwipe');
+  return !$('dlg').hidden || !$('edlg').hidden || !$('adlg').hidden || !$('sdlg').hidden || !$('rdlg').hidden || !$('pdlg').hidden || !$('imenu').hidden || !$('menu').hidden || !$('kopts').hidden || !!document.querySelector('.gwipe');
 }
 function poll() {
   if (document.hidden || !SYNCON() || $('app').hidden || overlayOpen()) return;
@@ -1014,8 +1054,10 @@ function pdRow(x, showKind) {
   var meta = document.createElement('div'); meta.className = 'pd-meta';
   if (showKind) meta.appendChild(mkKind(x.k));
   if (x.d) { var c = mkKind(fmtDate(x.d)); c.className += ' pd-date'; meta.appendChild(c); }
+  rateChip(meta, x);
   if (meta.children.length) m.appendChild(meta);
   r.appendChild(m);
+  r.appendChild(mkReview(x));
   r.appendChild(mkMore(function () { return pdEntries(x); }));
   return r;
 }
@@ -1084,6 +1126,59 @@ function ovHide(el) {
   el._ht = setTimeout(function () { el.hidden = true; el.classList.remove('out'); }, 190);
 }
 function focusLater(el, sel) { setTimeout(function () { try { el.focus({ preventScroll: true }); if (sel && el.select) el.select(); } catch (e) {} }, 230); }
+var SVGCMT = '<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+function rateChip(meta, x) { if (x.r) { var c = mkKind('★ ' + x.r); c.className += ' rt'; meta.appendChild(c); } }
+function mkReview(x) {
+  var b = document.createElement('button');
+  b.className = 'rvb' + ((x.r || x.n) ? ' has' : ''); b.innerHTML = SVGCMT; b.setAttribute('aria-label', 'Değerlendirme');
+  b.onclick = function () { openRV(x); };
+  return b;
+}
+var rvItem = null, rv = 0, rvT0 = '', rvR0 = 0;
+(function () {
+  var box = $('rstars');
+  for (var i = 1; i <= 5; i++) {
+    (function (n) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'rs'; b.setAttribute('role', 'radio'); b.setAttribute('aria-label', n + ' yıldız');
+      b.innerHTML = SVGSTAR;
+      b.onclick = function () { setRV(rv === n ? 0 : n, true); };
+      b.onmouseenter = function () { hoverRV(n); };
+      box.appendChild(b);
+    })(i);
+  }
+  box.onmouseleave = function () { hoverRV(0); };
+})();
+function hoverRV(n) { Array.prototype.forEach.call($('rstars').children, function (b, i) { b.classList.toggle('hv', i < n && !b.classList.contains('on')); }); }
+function paintRV(anim) {
+  Array.prototype.forEach.call($('rstars').children, function (b, i) {
+    var on = i < rv; b.classList.toggle('on', on); b.classList.remove('pop'); b.classList.remove('hv');
+    b.setAttribute('aria-checked', on && i === rv - 1 ? 'true' : 'false');
+    if (on && anim) { b.style.setProperty('--d', (i * 55) + 'ms'); void b.offsetWidth; b.classList.add('pop'); }
+  });
+  $('rcap').textContent = rv ? rv + ' / 5' : 'Henüz puan verilmedi';
+}
+function setRV(n, anim) { rv = n; paintRV(anim); }
+function rvGrow() { var t = $('rtxt'); t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight + 2, Math.round(window.innerHeight * 0.4)) + 'px'; }
+function openRV(x) {
+  rvItem = x; rv = x.r || 0; rvR0 = rv;
+  $('rname').textContent = x.t + ((x.y && x.k !== 'Diğer') ? ' (' + x.y + ')' : '');
+  $('rtxt').value = x.n || ''; rvT0 = $('rtxt').value;
+  paintRV(false); ovShow($('rdlg')); rvGrow();
+}
+function closeRV() { ovHide($('rdlg')); rvItem = null; }
+function rvDirty() { return rv !== rvR0 || $('rtxt').value !== rvT0; }
+$('rtxt').oninput = rvGrow;
+$('rno').onclick = closeRV;
+$('rdlg').onclick = function (ev) { if (ev.target === this && !rvDirty()) closeRV(); };
+document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' || ev.keyCode === 27) closeRV(); });
+$('rform').onsubmit = function (ev) {
+  ev.preventDefault();
+  var x = rvItem; if (!x) return;
+  var t = $('rtxt').value.trim();
+  if (rv) x.r = rv; else delete x.r;
+  if (t) x.n = t; else delete x.n;
+  closeRV(); render(); save(); toast('Değerlendirme kaydedildi ✓', true);
+};
 var imenu = $('imenu'), imCtx = null;
 function closeMenu() { imenu.hidden = true; imCtx = null; }
 function openMenu(btn, entries, refresh) {
