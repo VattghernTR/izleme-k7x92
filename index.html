@@ -127,7 +127,7 @@ body:not(.edit) .star{pointer-events:none}
 /* ★ Altın tema (yıldızlı içerikler) */
 :root{--g1:#f2d675;--g2:#d4af37;--gtint:rgba(212,175,55,.20);--gline:rgba(212,175,55,.45)}
 :root[data-m="light"]{--g1:#8a6414;--g2:#c79a1f;--gtint:rgba(199,154,31,.22);--gline:rgba(199,154,31,.55)}
-:root[data-m] .fav.f,:root[data-m] .fav.g{--bar:var(--g2);--acc:var(--g2);--on:#1a1400;box-shadow:inset 0 0 0 1px var(--gline),0 8px 24px -12px var(--g2)}
+:root[data-m] .fav.f,:root[data-m] .fav.g{--bar:var(--g2);--acc:var(--g2);--on:#fff;box-shadow:inset 0 0 0 1px var(--gline),0 8px 24px -12px var(--g2)}
 .fav::before{background:linear-gradient(100deg,var(--gtint),rgba(212,175,55,.05) 70%,transparent)}
 .f.fav:not(.done) .t,.g.fav:not(.sdone) .t{color:var(--g1)}
 .fav .k{border-color:var(--gline);color:var(--g1)}
@@ -357,11 +357,12 @@ body.arch .addwrap{display:none!important}
 .eadd.x .ex{max-width:0;margin-left:0;opacity:0}
 @media(max-width:700px){.eps .add.eadd{flex-wrap:wrap}.eadd .eflds{flex:1 1 100%}}
 /* dizi: sezon kutusu ve sezon seçici */
-.add .sz{display:none;flex:0 0 76px;text-align:center}
+.add .sz{display:none;flex:0 0 84px;text-align:center}
 .add.dz .sz{display:block}
 .abrk{display:none}
 @media(max-width:700px){
-  .add.dz .selbtn{min-width:100px;padding:10px 12px}
+  .add.dz .sel{flex:1 1 0;min-width:0}
+  .add.dz .selbtn{min-width:0;width:100%;padding:10px 12px}
   .add.dz .abrk{display:block;flex:0 0 100%;height:0}
   .add.dz>button[type=submit]{flex:0 0 auto;width:54%;margin:2px auto 0}
 }
@@ -372,6 +373,15 @@ body.arch .addwrap{display:none!important}
 .imenu .mc{flex:none;margin-left:auto;color:var(--mut);font-size:.9em;font-variant-numeric:tabular-nums}
 .imenu{max-height:min(60vh,420px);overflow-y:auto}
 #toast{z-index:60}
+/* sezon menüsü: dizi yeşili */
+.imenu.ssn{--card:#17231b;--card2:#1b3326;--acc:#3ddc84;--tx:#e9f6ee;border-color:rgba(61,220,132,.4)}
+:root[data-m="light"] .imenu.ssn{--card:#e4f4ea;--card2:#d3eddc;--acc:#16a34a;--tx:#14301f;border-color:rgba(22,163,74,.45)}
+.imenu.ssn button.on{color:var(--acc);font-weight:600;background:rgba(61,220,132,.12);box-shadow:inset 0 0 0 2px var(--acc)}
+:root[data-m="light"] .imenu.ssn button.on{background:rgba(22,163,74,.12)}
+.imenu.ssn button:hover{background:var(--card)}
+.imenu.ssn .mc{color:inherit;opacity:.75}
+.f.arc .t{cursor:default}
+@media(min-width:701px){.add.dz .n,.add.dz .u{flex:1 1 200px}.add.dz .sz{flex:0 0 104px}}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -788,10 +798,14 @@ function fillTitle(el, x) {
   if (y) [tx, ov].forEach(function (p) { var sp = document.createElement('span'); sp.className = 'yr'; sp.textContent = y; p.appendChild(document.createTextNode('\u2002')); p.appendChild(sp); });
   el.textContent = ''; el.appendChild(tx); el.appendChild(ov);
 }
-function mkLink(x) {
+function linkChip(u) {
+  var a = document.createElement('a'); a.className = 'k'; a.innerHTML = SVGLINK; a.setAttribute('aria-label', 'Bağlantıyı aç');
+  a.href = u; a.target = '_blank'; a.rel = 'noopener'; return a;
+}
+function mkLink(x, plain) {
   var a = document.createElement('a');
   a.className = 't'; fillTitle(a, x);
-  if (x.u) { a.href = x.u; a.target = '_blank'; a.rel = 'noopener'; } else { a.tabIndex = -1; }
+  if (x.u && !plain) { a.href = x.u; a.target = '_blank'; a.rel = 'noopener'; } else { a.tabIndex = -1; }
   return a;
 }
 function mkDel(fn) {
@@ -917,13 +931,13 @@ function mkRowLink(u) {
 }
 function buildFilm(x) {
   var li = document.createElement('li');
-  li.className = 'f k-' + CL[x.k] + (isW(x) && !x.a ? ' done gray' : '') + favCls(x) + (x.u ? ' lnk' : '') + (x.a ? ' arc' : ''); li.setAttribute('data-id', x.id);
-  if (x.u) li.appendChild(mkRowLink(x.u));
+  li.className = 'f k-' + CL[x.k] + (isW(x) && !x.a ? ' done gray' : '') + favCls(x) + (x.u && !x.a ? ' lnk' : '') + (x.a ? ' arc' : ''); li.setAttribute('data-id', x.id);
+  if (x.u && !x.a) li.appendChild(mkRowLink(x.u));
   if (!x.a) li.appendChild(mkChk(function () { var v = !isW(x); setW(x, v); li.classList.toggle('done', v); stats(); doneFx(li, v, x.id); }));
   var main = document.createElement('div'); main.className = 'main';
   var acts = document.createElement('div'); acts.className = 'acts';
-  main.appendChild(mkLink(x));
-  var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(mkKind(x.k)); rateChip(meta, x); dateChip(meta, x); acts.appendChild(meta); acts.appendChild(mkStar(x));
+  main.appendChild(mkLink(x, x.a));
+  var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(mkKind(x.k)); if (x.a && x.u) meta.appendChild(linkChip(x.u)); rateChip(meta, x); dateChip(meta, x); acts.appendChild(meta); acts.appendChild(mkStar(x));
   acts.appendChild(mkMore(function () { return itemEntries(x, li); }));
   main.appendChild(acts); li.appendChild(main);
   return li;
@@ -978,10 +992,10 @@ function buildSeries(s) {
   if (s.u) { var a = document.createElement('a'); a.className = 'k'; a.innerHTML = SVGLINK; a.setAttribute('aria-label', 'Bağlantıyı aç'); a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; meta.appendChild(a); }
   if (s.sc) {
     var sn = document.createElement('span'); sn.className = 'k sn ' + (s.sc > 1 ? 'pick' : 'one');
-    sn.innerHTML = curS + '. Sezon' + (s.sc > 1 ? SVGCH : '');
+    sn.innerHTML = curS + '. Sezon';
     if (s.sc > 1) {
       sn.setAttribute('role', 'button'); sn.tabIndex = 0; sn.setAttribute('aria-label', 'Sezon seç');
-      var openSn = function () { if (imCtx === sn && !imenu.hidden) { closeMenu(); return; } openMenu(sn, seasonEntries(s, curS)); };
+      var openSn = function () { if (imCtx === sn && !imenu.hidden) { closeMenu(); return; } openMenu(sn, seasonEntries(s, curS), null, 'ssn'); };
       sn.onclick = openSn;
       sn.onkeydown = function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openSn(); } };
     }
@@ -1434,18 +1448,18 @@ $('asortb').innerHTML = SVGSORT + '<span>Sırala</span>';
 $('asortb').onclick = function () { var b = this; if (imCtx === b && !imenu.hidden) { closeMenu(); return; } openMenu(b, pdSortEntries(true), function () { return pdSortEntries(true); }); };
 var imenu = $('imenu'), imCtx = null;
 function closeMenu() { imenu.hidden = true; imCtx = null; }
-function openMenu(btn, entries, refresh) {
+function openMenu(btn, entries, refresh, cls) {
   imenu.textContent = '';
   entries.forEach(function (e) {
     var b = document.createElement('button'); b.type = 'button'; if (e.cls) b.className = e.cls;
     b.innerHTML = (e.ic || '') + '<span>' + e.t + '</span>' + (e.end || '');
-    b.onclick = function (ev) { if (refresh) { ev.stopPropagation(); e.fn(); openMenu(btn, refresh(), refresh); } else { closeMenu(); e.fn(); } };
+    b.onclick = function (ev) { if (refresh) { ev.stopPropagation(); e.fn(); openMenu(btn, refresh(), refresh, cls); } else { closeMenu(); e.fn(); } };
     imenu.appendChild(b);
   });
-  imenu.className = 'imenu'; imenu.hidden = false;
+  imenu.className = 'imenu' + (cls ? ' ' + cls : ''); imenu.hidden = false;
   var r = btn.getBoundingClientRect(), mw = imenu.offsetWidth, mh = imenu.offsetHeight;
   var left = Math.max(8, Math.min(r.right - mw, window.innerWidth - mw - 8)), top = r.bottom + 6;
-  if (top + mh > window.innerHeight - 8 && r.top - mh - 6 > 8) { top = r.top - mh - 6; imenu.className = 'imenu up'; }
+  if (top + mh > window.innerHeight - 8 && r.top - mh - 6 > 8) { top = r.top - mh - 6; imenu.className = 'imenu' + (cls ? ' ' + cls : '') + ' up'; }
   imenu.style.left = left + 'px'; imenu.style.top = top + 'px'; imCtx = btn;
 }
 function mkMore(getEntries) {
@@ -1530,7 +1544,7 @@ function setDz(on) {
   var w0 = btn.offsetWidth;
   growFx(wrap, function () { f.classList.toggle('dz', on); }, [$('ksel'), btn]);
   var w1 = btn.offsetWidth;
-  if (w0 !== w1) btn.animate([{ width: w0 + 'px' }, { width: w1 + 'px' }], { duration: 380, easing: 'cubic-bezier(.22,.9,.3,1)' });
+  if (w1 > w0) btn.animate([{ width: w0 + 'px' }, { width: w1 + 'px' }], { duration: 380, easing: 'cubic-bezier(.22,.9,.3,1)' });
   if (on) $('sz').animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 320, delay: 90, easing: 'cubic-bezier(.22,.9,.3,1)', fill: 'backwards' });
 }
 ['Film', 'Dizi', 'Diğer'].forEach(function (v) {
