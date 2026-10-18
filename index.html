@@ -347,6 +347,15 @@ body.arch .addwrap{display:none!important}
 .k.rt.r1 svg{fill:currentColor;stroke:currentColor}
 :root[data-m="light"] .k.rt.r1{color:#b4443f;border-color:rgba(180,68,63,.5);background-color:rgba(180,68,63,.08)}
 @media (prefers-reduced-motion:reduce){.k.rt.r5::after{animation:none;display:none}}
+/* dizi bölümü ekleme: "+ Bölüm Ekle" düğmesi alanlara dönüşür */
+.eps .add.eadd{flex-wrap:nowrap;align-items:center}
+.eflds{display:none;flex:1 1 auto;min-width:0;gap:8px;flex-wrap:wrap;opacity:0;transform:translateY(-6px);transition:opacity .3s ease .08s,transform .38s cubic-bezier(.22,.9,.3,1)}
+.eadd.x .eflds{display:flex}
+.eadd.xs .eflds{opacity:1;transform:none}
+.eadd .eb{white-space:nowrap;flex:none}
+.eadd .ex{display:inline-block;overflow:hidden;vertical-align:bottom;max-width:3.2em;margin-left:.35em;opacity:1;transition:max-width .38s cubic-bezier(.22,.9,.3,1),margin .38s cubic-bezier(.22,.9,.3,1),opacity .2s}
+.eadd.x .ex{max-width:0;margin-left:0;opacity:0}
+@media(max-width:700px){.eps .add.eadd{flex-wrap:wrap}.eadd .eflds{flex:1 1 100%}}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -849,6 +858,21 @@ function mkPen(x, label) {
 }
 function mkKind(t) { var k = document.createElement('span'); k.className = 'k'; k.textContent = t; return k; }
 
+var epOpen = {};
+function growFx(li, mutate, flipEls) {
+  flipEls = flipEls || [];
+  if (!li.animate) { mutate(); return; }
+  var wrap = document.querySelector('.wrap'), after = [], n = li, sb;
+  while (n && n !== wrap) { for (sb = n.nextElementSibling; sb; sb = sb.nextElementSibling) after.push(sb); n = n.parentNode; }
+  var h0 = li.offsetHeight;
+  var t0 = after.map(function (e) { return e.getBoundingClientRect().top; });
+  var r0 = flipEls.map(function (e) { var r = e.getBoundingClientRect(); return [r.left, r.top]; });
+  mutate();
+  var dh = li.offsetHeight - h0, o = { duration: 380, easing: 'cubic-bezier(.22,.9,.3,1)' };
+  if (dh > 0) li.animate([{ clipPath: 'inset(0 0 ' + dh + 'px 0 round 16px)' }, { clipPath: 'inset(0 0 0px 0 round 16px)' }], o);
+  after.forEach(function (e, i) { var dy = t0[i] - e.getBoundingClientRect().top; if (dy) e.animate([{ transform: 'translateY(' + dy + 'px)' }, { transform: 'none' }], o); });
+  flipEls.forEach(function (e, i) { var r = e.getBoundingClientRect(), dx = r0[i][0] - r.left, dy = r0[i][1] - r.top; if (dx || dy) e.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], o); });
+}
 function mkRowLink(u) {
   var a = document.createElement('a');
   a.className = 'rl'; a.href = u; a.target = '_blank'; a.rel = 'noopener'; a.tabIndex = -1; a.setAttribute('aria-hidden', 'true');
@@ -937,11 +961,17 @@ function buildSeries(s) {
   } else {
     var no = document.createElement('div'); no.className = 'noep'; no.textContent = 'Henüz bölüm yok.'; box.appendChild(no);
   }
-  var f = document.createElement('form'); f.className = 'add';
+  var f = document.createElement('form'); f.className = 'add eadd' + (epOpen[s.id] ? ' x xs' : '');
+  var fl = document.createElement('div'); fl.className = 'eflds';
   var fn = document.createElement('input'); fn.className = 'n'; fn.placeholder = 'Bölüm ' + (s.e.length + 1);
   var fu = document.createElement('input'); fu.className = 'u'; fu.placeholder = 'Bağlantı'; fu.setAttribute('inputmode', 'url');
-  var fb = document.createElement('button'); fb.type = 'submit'; fb.textContent = '+ Bölüm';
-  f.appendChild(fn); f.appendChild(fu); f.appendChild(fb);
+  var fb = document.createElement('button'); fb.type = 'submit'; fb.className = 'eb'; fb.innerHTML = '+ Bölüm<span class="ex">Ekle</span>';
+  fl.appendChild(fn); fl.appendChild(fu); f.appendChild(fl); f.appendChild(fb);
+  fb.onclick = function (ev) {
+    if (f.classList.contains('x')) return;
+    ev.preventDefault(); epOpen[s.id] = true;
+    growFx(li, function () { f.classList.add('x'); void f.offsetHeight; f.classList.add('xs'); }, [fb]);
+  };
   f.onsubmit = function (ev) {
     ev.preventDefault();
     s.e.push({ id: uid(), t: fn.value.trim() || ('Bölüm ' + (s.e.length + 1)), u: fixUrl(fu.value), w: false });
