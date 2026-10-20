@@ -394,7 +394,7 @@ body.arch .addwrap{display:none!important}
 /* sürükleyerek sıralama */
 body.edit #list{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #list a{-webkit-user-drag:none;user-drag:none}
-#list>li.dg{z-index:30;box-shadow:0 18px 40px rgba(0,0,0,.4)!important;cursor:grabbing}
+#list>li.dg{z-index:30;box-shadow:0 10px 24px rgba(0,0,0,.36)!important;cursor:grabbing}
 #list>li.dgz{z-index:30}
 body.dragging{cursor:grabbing}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
@@ -1498,13 +1498,23 @@ function ordered(items) {
 }
 function dndOK() { return canEdit && !archMode && !$('app').hidden; }
 function itemById(id) { for (var i = 0; i < S.items.length; i++) if (S.items[i].id === id) return S.items[i]; return null; }
-function endPend() {
+function pendCleanup() {
   if (!dragPend) return;
-  clearTimeout(dragPend.t); dragPend = null;
+  clearTimeout(dragPend.t); clearTimeout(dragPend.pt); dragPend = null;
   document.removeEventListener('pointermove', pendMove, true);
   document.removeEventListener('pointerup', endPend, true);
   document.removeEventListener('pointercancel', endPend, true);
 }
+function endPend() { var had = !!dragPend; pendCleanup(); if (had && !dragSt) unpromote(); }
+function promoteNear() {
+  var vh = window.innerHeight;
+  Array.prototype.forEach.call($('list').children, function (e) {
+    if (!e.getBoundingClientRect) return;
+    var r = e.getBoundingClientRect();
+    if (r.bottom > -vh * 0.5 && r.top < vh * 1.5) e.style.willChange = 'transform';
+  });
+}
+function unpromote() { if (dragSt) return; Array.prototype.forEach.call($('list').children, function (e) { if (e.style) e.style.willChange = ''; }); }
 function pendMove(ev) {
   if (!dragPend || ev.pointerId !== dragPend.pid) return;
   var dx = ev.clientX - dragPend.x, dy = ev.clientY - dragPend.y;
@@ -1517,14 +1527,14 @@ $('list').addEventListener('pointerdown', function (ev) {
   var li = ev.target.closest ? ev.target.closest('#list > li') : null;
   if (!li || !li.getAttribute('data-id')) return;
   if (ev.target.closest('.more,.chk,.star,.eps,.chev,.rt,.sn')) return;
-  dragPend = { li: li, pid: ev.pointerId, x: ev.clientX, y: ev.clientY, t: setTimeout(beginDrag, 360) };
+  dragPend = { li: li, pid: ev.pointerId, x: ev.clientX, y: ev.clientY, t: setTimeout(beginDrag, 360), pt: setTimeout(promoteNear, 140) };
   document.addEventListener('pointermove', pendMove, true);
   document.addEventListener('pointerup', endPend, true);
   document.addEventListener('pointercancel', endPend, true);
 });
 function beginDrag() {
   var p = dragPend; if (!p) return;
-  endPend();
+  pendCleanup();
   var ul = $('list'), li = p.li; if (!li.parentNode) return;
   var els = Array.prototype.slice.call(ul.children).filter(function (e) { return e.getAttribute && e.getAttribute('data-id'); });
   var items = els.map(function (e) { return itemById(e.getAttribute('data-id')); });
@@ -1535,7 +1545,7 @@ function beginDrag() {
   var sy = window.pageYOffset;
   var rects = els.map(function (e) { var r = e.getBoundingClientRect(); return { top: r.top + sy, h: r.height }; });
   var gap = parseFloat(getComputedStyle(ul).rowGap) || 10;
-  dragSt = { li: li, els: els, items: items, a: a, b: a, lo: lo, hi: hi, rects: rects, gap: gap, startY: p.y, sy0: sy, curY: p.y, dy: 0, pid: p.pid, raf: 0, moving: false };
+  dragSt = { li: li, els: els, items: items, a: a, b: a, lo: lo, hi: hi, rects: rects, gap: gap, startY: p.y, sy0: sy, sy: sy, curY: p.y, dy: 0, pid: p.pid, raf: 0, moving: false };
   li.style.willChange = 'transform';
   li.classList.add('dg'); li.style.transition = 'transform .16s ease, box-shadow .2s';
   li.style.transform = 'translate3d(0,0,0) scale(1.02)';
@@ -1543,7 +1553,7 @@ function beginDrag() {
   document.addEventListener('pointermove', dMove, true);
   document.addEventListener('pointerup', dEnd, true);
   document.addEventListener('pointercancel', dCancel, true);
-  document.addEventListener('touchmove', blockTouch, { passive: false, capture: true });
+  $('list').addEventListener('touchmove', blockTouch, { passive: false, capture: true });
   try { li.setPointerCapture(p.pid); } catch (e) {}
   try { if (navigator.vibrate) navigator.vibrate(14); } catch (e) {}
 }
@@ -1563,6 +1573,8 @@ function dShift(d) {
     var t = 0;
     if (d.a < d.b && i > d.a && i <= d.b) t = -H; else if (d.a > d.b && i >= d.b && i < d.a) t = H;
     if (t) e.style.willChange = 'transform';
+    if (e._t === t) return;
+    e._t = t;
     e.style.transition = 'transform .28s cubic-bezier(.22,.9,.3,1)';
     e.style.transform = t ? 'translate3d(0,' + t + 'px,0)' : '';
   });
@@ -1572,16 +1584,17 @@ function dTick(ts) {
   var now = ts || Date.now(), dt = d.last ? Math.min(50, Math.max(1, now - d.last)) : 16; d.last = now;
   var vh = window.innerHeight, edge = 80, sp = 0;
   if (d.curY < edge) sp = -Math.ceil((edge - d.curY) / 5); else if (d.curY > vh - edge) sp = Math.ceil((d.curY - (vh - edge)) / 5);
-  if (sp) window.scrollBy(0, sp);
+  if (sp) { window.scrollBy(0, sp); d.sy = window.pageYOffset; }
   var R = d.rects, a = d.a, i;
-  var tgt = (d.curY - d.startY) + (window.pageYOffset - d.sy0);
+  var tgt = (d.curY - d.startY) + (d.sy - d.sy0);
   var minDy = R[d.lo].top - R[a].top, maxDy = (R[d.hi].top + R[d.hi].h) - (R[a].top + R[a].h);
   tgt = Math.max(minDy, Math.min(maxDy, tgt));
   if (d.pos === undefined) d.pos = 0;
   var diff = tgt - d.pos;
-  d.pos = Math.abs(diff) < 0.4 ? tgt : d.pos + diff * (1 - Math.exp(-dt / 38));
+  d.pos = Math.abs(diff) < 0.4 ? tgt : d.pos + diff * (1 - Math.exp(-dt / 22));
   var dy = d.pos; d.dy = dy;
-  d.li.style.transform = 'translate3d(0,' + dy.toFixed(2) + 'px,0) scale(1.02)';
+  var dpr = window.devicePixelRatio || 1;
+  d.li.style.transform = 'translate3d(0,' + (Math.round(dy * dpr) / dpr) + 'px,0) scale(1.02)';
   var c = R[a].top + R[a].h / 2 + dy, b = a;
   if (tgt >= maxDy - 2) b = d.hi;
   else if (tgt <= minDy + 2) b = d.lo;
@@ -1596,7 +1609,7 @@ function dropListeners() {
   document.removeEventListener('pointermove', dMove, true);
   document.removeEventListener('pointerup', dEnd, true);
   document.removeEventListener('pointercancel', dCancel, true);
-  document.removeEventListener('touchmove', blockTouch, { passive: false, capture: true });
+  $('list').removeEventListener('touchmove', blockTouch, { passive: false, capture: true });
 }
 function dEnd(ev) { var d = dragSt; if (d && ev.pointerId === d.pid) finishDrag(d); }
 function dCancel() { var d = dragSt; if (!d) return; d.b = d.a; dShift(d); finishDrag(d); }
