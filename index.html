@@ -339,7 +339,7 @@ body.arch .addwrap{display:none!important}
 @media (prefers-reduced-motion:reduce){.rwrap.five.draw .rframe,.rwrap.five.draw .rframe path{animation:none}}
 /* listedeki puan kutucuğu: 5 yıldız özel, 1 yıldız özel */
 .k.rt:hover{background-color:var(--card2)}
-.k.rt.r5{position:relative;overflow:hidden;font-weight:700;color:#3b2a00;border-color:transparent;background-image:linear-gradient(135deg,#ffe58a,#f6c344 48%,#e0a100);box-shadow:0 0 10px rgba(246,195,68,.5)}
+.k.rt.r5{position:relative;overflow:hidden;font-weight:700;color:#3b2a00;border-color:transparent;background-image:linear-gradient(135deg,#ffe58a,#f6c344 48%,#e0a100);background-origin:border-box;background-clip:border-box;background-repeat:no-repeat;box-shadow:0 0 10px rgba(246,195,68,.5)}
 .k.rt.r5:hover{background-color:transparent}
 .k.rt.r5 svg{fill:#3b2a00;stroke:#3b2a00}
 .k.rt.r5::after{content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-20deg);animation:sheen 3.4s ease-in-out infinite;pointer-events:none}
@@ -406,7 +406,7 @@ body.dragging{cursor:grabbing}
 .g:not(.fav){--sgbg:#26402f}
 :root[data-m="light"] .g:not(.fav){--sgbg:#cfeadb}
 .sg{margin:0 0 6px}
-.sgh{display:flex;align-items:center;gap:10px;width:100%;background:var(--sgbg,var(--epbg,var(--card2)));border:0;border-radius:12px;padding:11px 14px;color:var(--tx);font-size:.95em;font-weight:600;cursor:pointer;text-align:left;transition:background-color .2s}
+.sgh{display:flex;align-items:center;gap:10px;width:100%;-webkit-appearance:none;appearance:none;background:#26402f;border:0;border-radius:12px;padding:11px 14px;color:var(--tx);font-size:.95em;font-weight:600;cursor:pointer;text-align:left;transition:none}
 .sgh .sgt{flex:1}
 .sgh .sgc{font-size:.78em;color:var(--mut);font-weight:500;font-variant-numeric:tabular-nums}
 .sgh svg{width:16px;height:16px;flex:none;fill:none;stroke:var(--mut);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s}
@@ -415,6 +415,9 @@ body.dragging{cursor:grabbing}
 .sg.open .sgb{display:block}
 .sgb>ul{opacity:0;transform:translateY(-6px);transition:opacity .22s ease,transform .3s cubic-bezier(.22,.9,.3,1)}
 .sg.shown .sgb>ul{opacity:1;transform:none}
+.sgh:hover,.sgh:active,.sgh:focus{background:#26402f}
+:root[data-m="light"] .sgh,:root[data-m="light"] .sgh:hover,:root[data-m="light"] .sgh:active,:root[data-m="light"] .sgh:focus{background:#cfeadb}
+.g.fav .sgh,.g.fav .sgh:hover,.g.fav .sgh:active,.g.fav .sgh:focus{background:var(--card2)}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
