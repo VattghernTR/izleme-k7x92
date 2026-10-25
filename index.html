@@ -402,6 +402,19 @@ body.dragging{cursor:grabbing}
 .g:not(.fav){--epbg:#1e3026}
 :root[data-m="light"] .g:not(.fav){--epbg:#dff1e6}
 .eps .add input{background:var(--epbg,var(--card2))}
+/* arşivdeki çok sezonlu dizi: sezon başlıkları */
+.g:not(.fav){--sgbg:#26402f}
+:root[data-m="light"] .g:not(.fav){--sgbg:#cfeadb}
+.sg{margin:0 0 6px}
+.sgh{display:flex;align-items:center;gap:10px;width:100%;background:var(--sgbg,var(--epbg,var(--card2)));border:0;border-radius:12px;padding:11px 14px;color:var(--tx);font-size:.95em;font-weight:600;cursor:pointer;text-align:left;transition:background-color .2s}
+.sgh .sgt{flex:1}
+.sgh .sgc{font-size:.78em;color:var(--mut);font-weight:500;font-variant-numeric:tabular-nums}
+.sgh svg{width:16px;height:16px;flex:none;fill:none;stroke:var(--mut);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s}
+.sg.shown .sgh svg{transform:rotate(180deg)}
+.sgb{display:none;padding:6px 0 0 10px}
+.sg.open .sgb{display:block}
+.sgb>ul{opacity:0;transform:translateY(-6px);transition:opacity .22s ease,transform .3s cubic-bezier(.22,.9,.3,1)}
+.sg.shown .sgb>ul{opacity:1;transform:none}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -910,7 +923,18 @@ function mkPen(x, label) {
 }
 function mkKind(t) { var k = document.createElement('span'); k.className = 'k'; k.textContent = t; return k; }
 
-var epOpen = {}, seasonSel = {}, eCur = null;
+var epOpen = {}, seasonSel = {}, sgOpen = {}, eCur = null;
+function toggleSeason(g, key, sgs, li) {
+  var opening = !g.classList.contains('shown'), later = sgs.slice(sgs.indexOf(g) + 1);
+  clearTimeout(g._t);
+  if (opening) {
+    sgOpen[key] = true;
+    growFx(li, function () { g.classList.add('open'); void g.offsetHeight; g.classList.add('shown'); }, later);
+  } else {
+    sgOpen[key] = false; g.classList.remove('shown');
+    g._t = setTimeout(function () { growFx(li, function () { g.classList.remove('open'); }, later); }, 170);
+  }
+}
 function eSeason(e) { return e.s || 1; }
 function curSeason(s) {
   if (!s.sc) return 0;
@@ -966,7 +990,7 @@ function buildFilm(x) {
 function buildSeries(s) {
   s.e = eps(s);
   var curS = curSeason(s);
-  function scope() { return s.sc ? s.e.filter(function (e) { return eSeason(e) === curS; }) : s.e; }
+  function scope() { return (s.sc && !s.a) ? s.e.filter(function (e) { return eSeason(e) === curS; }) : s.e; }
   var li = document.createElement('li'); li.className = 'g k-d' + (open[s.id] ? ' open' : '') + favCls(s) + (s.a ? ' arc' : ''); li.setAttribute('data-id', s.id);
   var head = document.createElement('div'); head.className = 'row';
   var cnt = mkKind('');
@@ -976,7 +1000,7 @@ function buildSeries(s) {
   var pct = document.createElement('span'); pct.className = 'pct';
   prog.appendChild(bar); prog.appendChild(pct);
   function pctOf() { var a = scope(); return a.length ? Math.round(a.filter(isW).length * 100 / a.length) : (s.sc ? 0 : (isW(s) ? 100 : 0)); }
-  var epEls = [];
+  var epEls = [], sgCnts = [];
   function sync(first) {
     var d = doneS(s) && !s.a, sl = scope().length, n = scope().filter(isW).length, p = pctOf();
     head.classList.toggle('done', d); li.classList.toggle('sdone', d);
@@ -987,6 +1011,7 @@ function buildSeries(s) {
       q.el.classList.toggle('done', w);
       if (!s.a) { if (first) q.el.classList.toggle('gray', w); else if (was !== w) epFx(q.el, w); }
     });
+    sgCnts.forEach(function (c) { var l = s.e.filter(function (e) { return eSeason(e) === c.k; }); c.el.textContent = l.filter(isW).length + '/' + l.length; });
     pct.textContent = '%' + p;
     if (!first) fill.style.width = p + '%';
     stats();
@@ -1010,7 +1035,7 @@ function buildSeries(s) {
   main.appendChild(title);
   var meta = document.createElement('div'); meta.className = 'meta'; meta.appendChild(cnt);
   if (s.u) { var a = document.createElement('a'); a.className = 'k'; a.innerHTML = SVGLINK; a.setAttribute('aria-label', 'Bağlantıyı aç'); a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; meta.appendChild(a); }
-  if (s.sc) {
+  if (s.sc && !s.a) {
     var sn = document.createElement('span'); sn.className = 'k sn ' + (s.sc > 1 ? 'pick' : 'one');
     sn.innerHTML = curS + '. Sezon';
     if (s.sc > 1) {
@@ -1031,20 +1056,37 @@ function buildSeries(s) {
   li.onclick = function (ev) { if (ev.target.closest('.eps,.chk,.more,.star,.rvb,.rt,.sn,a')) return; tog(); };
 
   var box = document.createElement('div'); box.className = 'eps';
+  function mkEp(e) {
+    var el = document.createElement('li'); el.className = 'ep' + (isW(e) ? ' done' : '') + (e.u ? ' lnk' : '');
+    if (e.u) el.appendChild(mkRowLink(e.u));
+    el.appendChild(mkChk(function () { var was = doneS(s); setW(e, !isW(e)); sync(); doneChg(was); }));
+    el.appendChild(mkLink(e));
+    el.appendChild(mkMore(function () { return epEntries(s, e); }));
+    epEls.push({ el: el, x: e });
+    return el;
+  }
   var vis = scope();
-  if (vis.length) {
+  if (s.a && s.sc > 1) {
+    var sgs = [];
+    for (var k = 1; k <= s.sc; k++) (function (k) {
+      var list = s.e.filter(function (e) { return eSeason(e) === k; }), key = s.id + ':' + k;
+      var g = document.createElement('div'); g.className = 'sg' + (sgOpen[key] ? ' open shown' : '');
+      var h = document.createElement('button'); h.type = 'button'; h.className = 'sgh';
+      var t1 = document.createElement('span'); t1.className = 'sgt'; t1.textContent = k + '. Sezon';
+      var cs = document.createElement('span'); cs.className = 'sgc'; sgCnts.push({ el: cs, k: k });
+      h.appendChild(t1); h.appendChild(cs); h.insertAdjacentHTML('beforeend', SVGCH);
+      var b = document.createElement('div'); b.className = 'sgb';
+      if (list.length) { var u2 = document.createElement('ul'); list.forEach(function (e) { u2.appendChild(mkEp(e)); }); b.appendChild(u2); }
+      else { var no2 = document.createElement('div'); no2.className = 'noep'; no2.textContent = 'Bu sezonda henüz bölüm yok.'; b.appendChild(no2); }
+      g.appendChild(h); g.appendChild(b); sgs.push(g); box.appendChild(g);
+      h.onclick = function () { toggleSeason(g, key, sgs, li); };
+    })(k);
+  } else if (vis.length) {
     var ul = document.createElement('ul');
-    vis.forEach(function (e) {
-      var el = document.createElement('li'); el.className = 'ep' + (isW(e) ? ' done' : '') + (e.u ? ' lnk' : '');
-      if (e.u) el.appendChild(mkRowLink(e.u));
-      el.appendChild(mkChk(function () { var was = doneS(s); setW(e, !isW(e)); sync(); doneChg(was); }));
-      el.appendChild(mkLink(e));
-      el.appendChild(mkMore(function () { return epEntries(s, e); }));
-      ul.appendChild(el); epEls.push({ el: el, x: e });
-    });
+    vis.forEach(function (e) { ul.appendChild(mkEp(e)); });
     box.appendChild(ul);
   } else {
-    var no = document.createElement('div'); no.className = 'noep'; no.textContent = s.sc ? 'Bu sezonda henüz bölüm yok.' : 'Henüz bölüm yok.'; box.appendChild(no);
+    var no = document.createElement('div'); no.className = 'noep'; no.textContent = (s.sc && !s.a) ? 'Bu sezonda henüz bölüm yok.' : 'Henüz bölüm yok.'; box.appendChild(no);
   }
   var f = document.createElement('form'); f.className = 'add eadd' + (epOpen[s.id] ? ' x xs' : '');
   var fl = document.createElement('div'); fl.className = 'eflds';
@@ -1065,7 +1107,7 @@ function buildSeries(s) {
     open[s.id] = true; 
     barOnly = s.id; render(); barOnly = null; save();
   };
-  box.appendChild(f);
+  if (!s.a) box.appendChild(f);
   li.appendChild(box);
   sync(true);
   if (noBar && s.id !== barOnly) fill.style.width = pctOf() + '%'; else setTimeout(function () { fill.style.width = pctOf() + '%'; }, 40);
