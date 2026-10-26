@@ -39,7 +39,7 @@ body.edit .add{display:flex}
 .add .n{flex:2 1 200px}.add .u{flex:3 1 240px}
 .add button{background:var(--acc);color:var(--on);border:0;border-radius:12px;padding:10px 20px;font-weight:700;cursor:pointer}
 ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.f,.g{position:relative;background:var(--card);border-radius:16px}
+.f,.g{position:relative;isolation:isolate;background:var(--card);border-radius:16px}
 .f,.row,.ep{display:flex;align-items:center;gap:14px;padding:12px 14px}
 .chk{flex:none;width:40px;height:40px;border-radius:50%;border:3px solid var(--mut);background:transparent;cursor:pointer;display:grid;place-items:center;padding:0;transition:background .25s,border-color .25s,transform .25s}
 .chk svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:26;stroke-dashoffset:26;transition:stroke-dashoffset .35s .1s}
@@ -106,7 +106,7 @@ body.edit .del{display:grid}
 @keyframes fadeout{from{opacity:1}to{opacity:0}}
 @keyframes popout{from{opacity:1;transform:none}to{opacity:0;transform:translate3d(0,8px,0) scale(.98)}}
 /* Tümü ve İzlenmedi görünümünde: nötr kart + soluk kategori rengi (sol çizgi ve hafif ışıma) */
-.f::before,.g::before{content:"";position:absolute;left:0;top:0;right:0;bottom:0;border-radius:inherit;pointer-events:none;background:linear-gradient(90deg,var(--tint,transparent),transparent 55%)}
+.f::before,.g::before{content:"";position:absolute;z-index:-1;left:0;top:0;right:0;bottom:0;border-radius:inherit;pointer-events:none;background:linear-gradient(90deg,var(--tint,transparent),transparent 55%)}
 .f::after,.g::after{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--bar,transparent);pointer-events:none}
 :root[data-c="a"] .k-f,:root[data-c="t"] .k-f{--acc:#ff6b6b;--on:#1a0809;--bar:#ff6b6b;--tint:rgba(255,107,107,.10)}
 :root[data-c="a"] .k-d,:root[data-c="t"] .k-d{--acc:#3ddc84;--on:#07140c;--bar:#3ddc84;--tint:rgba(61,220,132,.10)}
@@ -928,14 +928,14 @@ function mkKind(t) { var k = document.createElement('span'); k.className = 'k'; 
 
 var epOpen = {}, seasonSel = {}, sgOpen = {}, eCur = null;
 function toggleSeason(g, key, sgs, li) {
+  if (li._fin) li._fin();
   var opening = !g.classList.contains('shown'), later = sgs.slice(sgs.indexOf(g) + 1);
-  clearTimeout(g._t);
   if (opening) {
     sgOpen[key] = true;
     growFx(li, function () { g.classList.add('open'); void g.offsetHeight; g.classList.add('shown'); }, later);
   } else {
     sgOpen[key] = false; g.classList.remove('shown');
-    g._t = setTimeout(function () { growFx(li, function () { g.classList.remove('open'); }, later); }, 170);
+    shrinkFx(li, function () { g.classList.remove('open'); }, function () { g.classList.add('open'); }, later);
   }
 }
 function eSeason(e) { return e.s || 1; }
@@ -957,8 +957,30 @@ function seasonEntries(s, cur) {
   })(k);
   return out;
 }
+function shrinkFx(li, mutate, undo, flipEls) {
+  flipEls = flipEls || [];
+  if (li._fin) li._fin();
+  if (!li.animate) { mutate(); return; }
+  var wrap = document.querySelector('.wrap'), after = [], n = li, sb;
+  while (n && n !== wrap) { for (sb = n.nextElementSibling; sb; sb = sb.nextElementSibling) after.push(sb); n = n.parentNode; }
+  var h0 = li.offsetHeight;
+  var top = function (e) { return e.getBoundingClientRect().top; };
+  var lt = function (e) { var r = e.getBoundingClientRect(); return [r.left, r.top]; };
+  var t0 = after.map(top), r0 = flipEls.map(lt);
+  mutate();
+  var dh = h0 - li.offsetHeight, t1 = after.map(top), r1 = flipEls.map(lt);
+  undo();
+  if (dh <= 0) { mutate(); return; }
+  var o = { duration: 380, easing: 'cubic-bezier(.22,.9,.3,1)', fill: 'forwards' }, anims = [];
+  anims.push(li.animate([{ clipPath: 'inset(0 0 0px 0 round 16px)' }, { clipPath: 'inset(0 0 ' + dh + 'px 0 round 16px)' }], o));
+  after.forEach(function (e, i) { var dy = t1[i] - t0[i]; if (dy) anims.push(e.animate([{ transform: 'none' }, { transform: 'translateY(' + dy + 'px)' }], o)); });
+  flipEls.forEach(function (e, i) { var dx = r1[i][0] - r0[i][0], dy = r1[i][1] - r0[i][1]; if (dx || dy) anims.push(e.animate([{ transform: 'none' }, { transform: 'translate(' + dx + 'px,' + dy + 'px)' }], o)); });
+  li._fin = function () { li._fin = null; mutate(); anims.forEach(function (a) { a.cancel(); }); };
+  anims[0].onfinish = function () { if (li._fin) li._fin(); };
+}
 function growFx(li, mutate, flipEls) {
   flipEls = flipEls || [];
+  if (li._fin) li._fin();
   if (!li.animate) { mutate(); return; }
   var wrap = document.querySelector('.wrap'), after = [], n = li, sb;
   while (n && n !== wrap) { for (sb = n.nextElementSibling; sb; sb = sb.nextElementSibling) after.push(sb); n = n.parentNode; }
@@ -1021,8 +1043,10 @@ function buildSeries(s) {
   }
   function doneChg(was) { if (s.a) return; var now = doneS(s); if (was !== now) doneFx(li, now, s.id); }
   function tog() {
-    open[s.id] = !open[s.id]; li.classList.toggle('open', !!open[s.id]);
-    
+    if (li._fin) li._fin();
+    var want = !li.classList.contains('open'); open[s.id] = want;
+    if (want) growFx(li, function () { li.classList.add('open'); }, []);
+    else shrinkFx(li, function () { li.classList.remove('open'); }, function () { li.classList.add('open'); }, []);
   }
   var title = document.createElement('button');
   title.className = 't'; fillTitle(title, s);
