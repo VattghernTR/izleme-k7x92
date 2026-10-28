@@ -167,7 +167,8 @@ body.edit .pen{display:grid}
 /* bölüm izlendi: yerinde kalır, soldan sağa soluk siyah-beyaz */
 .ep{position:relative}
 .ep.gray{filter:grayscale(1);opacity:.58}
-.g.gray .ep.gray{opacity:1}
+.g.gray .ep.gray{opacity:1;filter:none}
+.cvx .ep{content-visibility:visible}
 /* yıl etiketi */
 .yr{display:inline-block;position:relative;margin-left:0;padding:1px 9px;border-radius:999px;background:var(--card2);color:var(--mut);font-size:.7em;font-weight:500;line-height:1.6;letter-spacing:.02em;vertical-align:.08em;font-variant-numeric:tabular-nums;white-space:nowrap}
 .yr::after{content:"";position:absolute;left:4px;right:4px;top:50%;height:2px;margin-top:-1px;border-radius:2px;background:var(--acc);transform:scaleX(0);transform-origin:left;transition:transform .3s ease 0s}
@@ -1053,8 +1054,9 @@ function buildSeries(s) {
   function tog() {
     if (li._fin) li._fin();
     var want = !li.classList.contains('open'); open[s.id] = want;
+    li.classList.add('cvx'); clearTimeout(li._cvt); li._cvt = setTimeout(function () { li.classList.remove('cvx'); }, 560);
     if (want) growFx(li, function () { li.classList.add('open'); }, []);
-    else shrinkFx(li, function () { li.classList.remove('open'); }, function () { li.classList.add('open'); }, []);
+    else shrinkFx(li, function () { box.style.animation = ''; li.classList.remove('open'); }, function () { box.style.animation = 'none'; li.classList.add('open'); }, []);
   }
   var title = document.createElement('button');
   title.className = 't'; fillTitle(title, s);
