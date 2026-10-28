@@ -169,6 +169,7 @@ body.edit .pen{display:grid}
 .ep.gray{filter:grayscale(1);opacity:.58}
 .g.gray .ep.gray{opacity:1;filter:none}
 .cvx .ep{content-visibility:visible}
+.cvx .eps{will-change:transform}
 /* yıl etiketi */
 .yr{display:inline-block;position:relative;margin-left:0;padding:1px 9px;border-radius:999px;background:var(--card2);color:var(--mut);font-size:.7em;font-weight:500;line-height:1.6;letter-spacing:.02em;vertical-align:.08em;font-variant-numeric:tabular-nums;white-space:nowrap}
 .yr::after{content:"";position:absolute;left:4px;right:4px;top:50%;height:2px;margin-top:-1px;border-radius:2px;background:var(--acc);transform:scaleX(0);transform-origin:left;transition:transform .3s ease 0s}
@@ -990,6 +991,7 @@ function shrinkFx(li, mutate, undo, flipEls) {
   if (dh <= 0) { mutate(); return; }
   var o = fxOpt(dh); o.fill = 'forwards'; var anims = [];
   anims.push(li.animate([{ clipPath: 'inset(0 0 0px 0 round 16px)' }, { clipPath: 'inset(0 0 ' + dh + 'px 0 round 16px)' }], o));
+  try { var bo = {}; for (var kk in o) bo[kk] = o[kk]; bo.pseudoElement = '::after'; anims.push(li.animate([{ bottom: '14px' }, { bottom: (14 + dh) + 'px' }], bo)); } catch (e) { }
   after.forEach(function (e, i) { var dy = t1[i] - t0[i]; if (dy) anims.push(e.animate([{ transform: 'none' }, { transform: 'translateY(' + dy + 'px)' }], o)); });
   flipEls.forEach(function (e, i) { var dx = r1[i][0] - r0[i][0], dy = r1[i][1] - r0[i][1]; if (dx || dy) anims.push(e.animate([{ transform: 'none' }, { transform: 'translate(' + dx + 'px,' + dy + 'px)' }], o)); });
   li._fin = function () { li._fin = null; mutate(); anims.forEach(function (a) { a.cancel(); }); };
@@ -1006,6 +1008,7 @@ function growFx(li, mutate, flipEls) {
   mutate();
   var dh = li.offsetHeight - h0, o = fxOpt(dh);
   if (dh > 0) li.animate([{ clipPath: 'inset(0 0 ' + dh + 'px 0 round 16px)' }, { clipPath: 'inset(0 0 0px 0 round 16px)' }], o);
+  if (dh > 0) try { var bo = {}; for (var kk in o) bo[kk] = o[kk]; bo.pseudoElement = '::after'; li.animate([{ bottom: (14 + dh) + 'px' }, { bottom: '14px' }], bo); } catch (e) { }
   after.forEach(function (e, i) { var dy = t0[i] - e.getBoundingClientRect().top; if (dy) e.animate([{ transform: 'translateY(' + dy + 'px)' }, { transform: 'none' }], o); });
   flipEls.forEach(function (e, i) { var r = e.getBoundingClientRect(), dx = r0[i][0] - r.left, dy = r0[i][1] - r.top; if (dx || dy) e.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], o); });
 }
