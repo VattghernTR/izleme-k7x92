@@ -61,7 +61,8 @@ ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .ep .del{background:var(--card)}
 body.edit .del{display:grid}
 .del:hover{color:#ff6b6b}
-.eps{display:none;padding:0 12px 12px 30px;animation:fade .25s}
+.eps{display:none;padding:0 12px 12px 30px;animation:epsin .25s}
+@keyframes epsin{from{opacity:0}to{opacity:1}}
 .g.open .eps{display:block}
 .eps ul{gap:6px}
 .ep{background:var(--epbg,var(--card2));border-radius:12px;padding:8px 12px}
@@ -169,7 +170,7 @@ body.edit .pen{display:grid}
 .ep.gray{filter:grayscale(1);opacity:.58}
 .g.gray .ep.gray{opacity:1;filter:none}
 .cvx .ep{content-visibility:visible}
-.cvx .eps{will-change:transform}
+.cvx .eps{will-change:opacity}
 .g::after{transform-origin:50% 0}
 /* yıl etiketi */
 .yr{display:inline-block;position:relative;margin-left:0;padding:1px 9px;border-radius:999px;background:var(--card2);color:var(--mut);font-size:.7em;font-weight:500;line-height:1.6;letter-spacing:.02em;vertical-align:.08em;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -333,7 +334,7 @@ body.arch .addwrap{display:none!important}
 .addwrap .add{background:transparent;margin:0;padding:0 12px 12px}
 .rwrap{position:relative;width:fit-content;max-width:100%;margin:16px auto 4px;padding:6px 10px}
 .rframe{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;opacity:0;transition:opacity .25s}
-.rframe path{fill:none;stroke:var(--star);stroke-width:2;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:0}
+.rframe path{fill:none;stroke:var(--star);stroke-width:2;stroke-linecap:round;stroke-dasharray:100 200;stroke-dashoffset:0}
 .rwrap.five .rframe{opacity:1;animation:halo 2.2s ease-in-out infinite alternate}
 .rwrap.five.draw .rframe{animation:fglow .9s ease-out .95s both,halo 2.2s ease-in-out 1.85s infinite alternate}
 .rwrap.five.draw .rframe path{animation:fdraw .6s cubic-bezier(.4,0,.2,1) .35s both}
