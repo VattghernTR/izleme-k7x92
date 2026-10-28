@@ -418,6 +418,8 @@ body.dragging{cursor:grabbing}
 .sgh:hover,.sgh:active,.sgh:focus{background:#26402f}
 :root[data-m="light"] .sgh,:root[data-m="light"] .sgh:hover,:root[data-m="light"] .sgh:active,:root[data-m="light"] .sgh:focus{background:#cfeadb}
 .g.fav .sgh,.g.fav .sgh:hover,.g.fav .sgh:active,.g.fav .sgh:focus{background:var(--card2)}
+.ep{content-visibility:auto;contain-intrinsic-size:auto 60px}
+@media(min-width:701px){.ep{contain-intrinsic-size:auto 66px}}
 @keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 :focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .tab,.add,.add input,.add select,.add button,.f,.g,.ep{transition:background-color .5s,color .5s}
@@ -957,12 +959,19 @@ function seasonEntries(s, cur) {
   })(k);
   return out;
 }
+function collectAfter(li) {
+  var wrap = document.querySelector('.wrap'), out = [], n = li, sb, r, vh = window.innerHeight;
+  while (n && n !== wrap) {
+    for (sb = n.nextElementSibling; sb; sb = sb.nextElementSibling) { r = sb.getBoundingClientRect(); if (r.bottom > -150 && r.top < vh + 700) out.push(sb); }
+    n = n.parentNode;
+  }
+  return out;
+}
 function shrinkFx(li, mutate, undo, flipEls) {
   flipEls = flipEls || [];
   if (li._fin) li._fin();
   if (!li.animate) { mutate(); return; }
-  var wrap = document.querySelector('.wrap'), after = [], n = li, sb;
-  while (n && n !== wrap) { for (sb = n.nextElementSibling; sb; sb = sb.nextElementSibling) after.push(sb); n = n.parentNode; }
+  var after = collectAfter(li);
   var h0 = li.offsetHeight;
   var top = function (e) { return e.getBoundingClientRect().top; };
   var lt = function (e) { var r = e.getBoundingClientRect(); return [r.left, r.top]; };
@@ -982,8 +991,7 @@ function growFx(li, mutate, flipEls) {
   flipEls = flipEls || [];
   if (li._fin) li._fin();
   if (!li.animate) { mutate(); return; }
-  var wrap = document.querySelector('.wrap'), after = [], n = li, sb;
-  while (n && n !== wrap) { for (sb = n.nextElementSibling; sb; sb = sb.nextElementSibling) after.push(sb); n = n.parentNode; }
+  var after = collectAfter(li);
   var h0 = li.offsetHeight;
   var t0 = after.map(function (e) { return e.getBoundingClientRect().top; });
   var r0 = flipEls.map(function (e) { var r = e.getBoundingClientRect(); return [r.left, r.top]; });
