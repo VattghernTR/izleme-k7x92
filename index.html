@@ -941,7 +941,7 @@ function toggleSeason(g, key, sgs, li) {
   if (opening) {
     sgOpen[key] = true;
     growFx(li, function () { g.classList.add('open'); void g.offsetHeight; g.classList.add('shown'); }, later);
-    if (sb.animate) { var H = sb.offsetHeight; if (H > 0) { var a = sb._fx = sb.animate([{ clipPath: 'inset(0 0 ' + H + 'px 0)' }, { clipPath: 'inset(0 0 0px 0)' }], fxOpt(H)); a.onfinish = function () { if (sb._fx === a) sb._fx = null; }; } }
+    if (sb.animate) { var H = sb.offsetHeight; if (H > 0) { var gf = gFx(H), a = sb._fx = sb.animate(gKf(gf, 'clipPath', function (v) { return 'inset(0 0 ' + (H * (1 - v)) + 'px 0)'; }), gf.o); a.onfinish = function () { if (sb._fx === a) sb._fx = null; }; } }
   } else {
     sgOpen[key] = false;
     var H2 = sb.animate ? sb.offsetHeight : 0;
@@ -978,6 +978,17 @@ function collectAfter(li) {
   return out;
 }
 function fxOpt(dh) { return dh > 400 ? { duration: Math.min(700, Math.round(380 + (dh - 400) * 0.35)), easing: 'cubic-bezier(.3,.65,.25,1)' } : { duration: 380, easing: 'cubic-bezier(.22,.9,.3,1)' }; }
+function gFx(dh) {
+  var cap = Math.min(620, Math.max(420, (window.innerHeight || 700) * 0.75));
+  if (dh <= cap) return { split: false, r: 1, o: { duration: 380, easing: 'cubic-bezier(.22,.9,.3,1)' } };
+  return { split: true, r: cap / dh, o: { duration: 500, easing: 'linear' } };
+}
+function gKf(fx, prop, mk) {
+  var a = {}, b = {}, c = {}; a[prop] = mk(0);
+  if (!fx.split) { b[prop] = mk(1); return [a, b]; }
+  a.easing = 'cubic-bezier(.25,.6,.3,1)'; b.offset = 0.9; b[prop] = mk(fx.r); b.easing = 'linear'; c[prop] = mk(1);
+  return [a, b, c];
+}
 function shrinkFx(li, mutate, undo, flipEls) {
   flipEls = flipEls || [];
   if (li._fin) li._fin();
@@ -1008,11 +1019,11 @@ function growFx(li, mutate, flipEls) {
   var t0 = after.map(function (e) { return e.getBoundingClientRect().top; });
   var r0 = flipEls.map(function (e) { var r = e.getBoundingClientRect(); return [r.left, r.top]; });
   mutate();
-  var dh = li.offsetHeight - h0, o = fxOpt(dh);
-  if (dh > 0) li.animate([{ clipPath: 'inset(0 0 ' + dh + 'px 0 round 16px)' }, { clipPath: 'inset(0 0 0px 0 round 16px)' }], o);
-  if (dh > 0) try { var bo = {}; for (var kk in o) bo[kk] = o[kk]; bo.pseudoElement = '::after'; var ht = li.offsetHeight - 28; li.animate([{ transform: 'scaleY(' + Math.max(0, (ht - dh) / ht) + ')' }, { transform: 'scaleY(1)' }], bo); } catch (e) { }
-  after.forEach(function (e, i) { var dy = t0[i] - e.getBoundingClientRect().top; if (dy) e.animate([{ transform: 'translateY(' + dy + 'px)' }, { transform: 'none' }], o); });
-  flipEls.forEach(function (e, i) { var r = e.getBoundingClientRect(), dx = r0[i][0] - r.left, dy = r0[i][1] - r.top; if (dx || dy) e.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], o); });
+  var dh = li.offsetHeight - h0, fx = gFx(dh), o = fx.o;
+  if (dh > 0) li.animate(gKf(fx, 'clipPath', function (v) { return 'inset(0 0 ' + (dh * (1 - v)) + 'px 0 round 16px)'; }), o);
+  if (dh > 0) try { var bo = {}; for (var kk in o) bo[kk] = o[kk]; bo.pseudoElement = '::after'; var ht = li.offsetHeight - 28, sc0 = Math.max(0, (ht - dh) / ht); li.animate(gKf(fx, 'transform', function (v) { return 'scaleY(' + (sc0 + (1 - sc0) * v) + ')'; }), bo); } catch (e) { }
+  after.forEach(function (e, i) { var dy = t0[i] - e.getBoundingClientRect().top; if (dy) e.animate(gKf(fx, 'transform', function (v) { return 'translateY(' + (dy * (1 - v)) + 'px)'; }), o); });
+  flipEls.forEach(function (e, i) { var r = e.getBoundingClientRect(), dx = r0[i][0] - r.left, dy = r0[i][1] - r.top; if (dx || dy) e.animate(gKf(fx, 'transform', function (v) { return 'translate(' + (dx * (1 - v)) + 'px,' + (dy * (1 - v)) + 'px)'; }), o); });
 }
 function mkRowLink(u) {
   var a = document.createElement('a');
