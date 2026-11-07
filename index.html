@@ -385,6 +385,10 @@ body.arch .addwrap{display:none!important}
 :root[data-m="light"] .imenu.ssn button.on{background:rgba(22,163,74,.12)}
 .imenu.ssn button:hover{background:var(--card)}
 .imenu.ssn .mc{color:inherit;opacity:.75}
+.imenu.ssn.gold{--card:#2a2412;--card2:#312c1a;--acc:var(--g1);--tx:#f3e7bb;border-color:var(--gline)}
+:root[data-m="light"] .imenu.ssn.gold{--card:#e9d9a6;--card2:#f2e6bf;--acc:var(--g1);--tx:#3a2c06;border-color:var(--gline)}
+.imenu.ssn.gold button.on{color:var(--acc);background:rgba(212,175,55,.14);box-shadow:inset 0 0 0 2px var(--g2)}
+:root[data-m="light"] .imenu.ssn.gold button.on{background:rgba(199,154,31,.16)}
 .f.arc .t{cursor:default}
 @media(min-width:701px){.add.dz .n,.add.dz .u{flex:1 1 200px}.add.dz .sz{flex:0 0 104px}}
 /* yıldızlı kart: beyaz yazı yalnızca açık temada */
@@ -1763,6 +1767,7 @@ document.addEventListener('keydown', function (ev) { if (dragSt && (ev.key === '
 var imenu = $('imenu'), imCtx = null;
 function closeMenu() { imenu.hidden = true; imCtx = null; }
 function openMenu(btn, entries, refresh, cls) {
+  if (cls === 'ssn' && btn.closest && btn.closest('.fav')) cls = 'ssn gold';
   imenu.textContent = '';
   entries.forEach(function (e) {
     var b = document.createElement('button'); b.type = 'button'; if (e.cls) b.className = e.cls;
