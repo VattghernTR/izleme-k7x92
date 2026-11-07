@@ -235,6 +235,8 @@ body.edit .more{display:grid}
 .pd-row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:10px 14px}
 .pd-main{flex:1;min-width:0;display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
 .pd-name{word-break:break-word}
+.pd-t{margin-right:12px}
+.pd-row .star{order:0}
 .pd-meta{display:flex;gap:6px;flex-wrap:wrap}
 .pd-date{font-variant-numeric:tabular-nums}
 .imenu button span{flex:1}
@@ -1377,10 +1379,20 @@ function pdEntries(x) {
     { ic: SVGX, t: 'Sil', cls: 'mdel', fn: function () { askDel('"' + x.t + '" listeden kaldırılacak.', function () { S.items = S.items.filter(function (z) { return z.id !== x.id; }); render(); save(); }); } }
   ];
 }
+function mkPdStar(x) {
+  var b = document.createElement('button'); b.type = 'button';
+  b.className = 'star' + (x.f ? ' on' : ''); b.innerHTML = SVGSTAR; b.setAttribute('aria-label', 'Yıldızla');
+  b.onclick = function () {
+    x.f = !x.f; if (x.f) x.fa = Date.now(); else delete x.fa;
+    b.classList.toggle('on', !!x.f); b.classList.add('pop'); save();
+    if (pdSort.k === 's') setTimeout(renderPDList, x.f ? 300 : 420);
+  };
+  return b;
+}
 function pdRow(x, showKind) {
   var r = document.createElement('div'); r.className = 'pd-row';
   var m = document.createElement('div'); m.className = 'pd-main';
-  var nm = document.createElement('div'); nm.className = 'pd-name'; nm.appendChild(document.createTextNode(x.t));
+  var nm = document.createElement('div'); nm.className = 'pd-name'; var pt = document.createElement('span'); pt.textContent = x.t; if (x.y && x.k !== 'Diğer') pt.className = 'pd-t'; nm.appendChild(pt);
   if (x.y && x.k !== 'Diğer') { var sp = document.createElement('span'); sp.className = 'yr'; sp.textContent = x.y; nm.appendChild(sp); }
   m.appendChild(nm);
   var meta = document.createElement('div'); meta.className = 'pd-meta';
@@ -1389,6 +1401,7 @@ function pdRow(x, showKind) {
   rateChip(meta, x);
   if (meta.children.length) m.appendChild(meta);
   r.appendChild(m);
+  r.appendChild(mkPdStar(x));
   r.appendChild(mkMore(function () { return pdEntries(x); }));
   return r;
 }
@@ -1413,7 +1426,7 @@ function renderPD() {
   var body = document.createElement('div'); body.className = 'pd-body';
   var bar = document.createElement('div'); bar.className = 'pd-bar';
   var sb = document.createElement('button'); sb.type = 'button'; sb.className = 'pd-sort'; sb.innerHTML = SVGSORT + '<span>Sırala</span>';
-  sb.onclick = function () { if (imCtx === sb && !imenu.hidden) { closeMenu(); return; } openMenu(sb, pdSortEntries(), pdSortEntries); };
+  sb.onclick = function () { if (imCtx === sb && !imenu.hidden) { closeMenu(); return; } openMenu(sb, pdSortEntries(true), function () { return pdSortEntries(true); }); };
   var ab = document.createElement('button'); ab.type = 'button'; ab.className = 'pd-add'; ab.innerHTML = SVGPLUS + '<span>Ekle</span>';
   ab.onclick = function () { openPD(null); };
   bar.appendChild(sb); if (archMode) bar.appendChild(ab); body.appendChild(bar);
